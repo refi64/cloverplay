@@ -14,17 +14,18 @@ fun PointF.scaled(value: Float): PointF {
   return new
 }
 
+fun PointF.clone(): PointF = PointF(x, y)
+
 class Joystick(val center: PointF, val radius: Float, val side: Side) {
   enum class Side { LEFT, RIGHT }
 
   var relativePosition = PointF(0.0f, 0.0f)
     private set
-
-  val absolutePosition: PointF
-    get() = PointF(relativePosition.x, relativePosition.y).apply { offset(center.x, center.y) }
+  var absolutePosition = center.clone()
+    private set
 
   fun moveTo(abs: PointF) {
-    relativePosition = PointF(abs.x, abs.y).apply {
+    relativePosition = abs.clone().apply {
       offset(-center.x, -center.y)
 
       val dist = sqrt(x * x + y * y)
@@ -32,5 +33,7 @@ class Joystick(val center: PointF, val radius: Float, val side: Side) {
         scale(radius / dist)
       }
     }
+
+    absolutePosition = relativePosition.clone().apply { offset(center.x, center.y) }
   }
 }
