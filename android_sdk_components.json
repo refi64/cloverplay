@@ -1,0 +1,22 @@
+{
+  "tool": {
+    "version": "25.2.5",
+    "filename": "tools_r25.2.5-linux.zip"
+  },
+  "platform_tool": {
+    "version": "29.0.6",
+    "filename": "platform-tools_r29.0.6-linux.zip"
+  },
+  "build_tool": {
+    "version": "29.0.3",
+    "filename": "build-tools_r29.0.3-linux.zip"
+  },
+  "platform": {
+    "version": "29",
+    "filename": "platform-29_r04.zip"
+  },
+  "ndk": {
+    "version": "21",
+    "filename": "android-ndk-r21-linux-x86_64.zip"
+  }
+}

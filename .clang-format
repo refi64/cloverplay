@@ -1,0 +1,8 @@
+AccessModifierOffset: -1
+AlwaysBreakTemplateDeclarations: true
+AlignEscapedNewlines: Left
+ColumnLimit: 100
+FixNamespaceComments: true
+NamespaceIndentation: Inner
+PointerAlignment: Left
+SpacesBeforeTrailingComments: 2

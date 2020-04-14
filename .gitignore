@@ -1,0 +1,8 @@
+.aswb/.blaze
+.aswb/.idea/libraries
+.brt/
+.clangd/
+bazel-*
+compile_commands.json
+third_party/
+*.keystore

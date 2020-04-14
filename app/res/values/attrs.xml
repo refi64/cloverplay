@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <declare-styleable name="RoundControllerButtonView">
+    <attr name="letter" format="string" />
+    <attr name="mini" format="boolean" />
+    <attr name="b_icon" format="integer" />
+  </declare-styleable>
+
+  <declare-styleable name="SmallRectControllerButtonView">
+    <attr name="r_icon" format="integer" />
+    <attr name="r_size" format="string" />
+    <attr name="r_text" format="string" />
+  </declare-styleable>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <androidx.coordinatorlayout.widget.CoordinatorLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="@dimen/overlay_alpha"
+        app:backgroundTint="?attr/colorPrimary" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="10dp"
+        android:text=""
+        android:textColor="#FFF"
+        android:textSize="24sp"
+        app:layout_anchor="@id/button"
+        app:layout_anchorGravity="center" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="10dp"
+        android:tint="@android:color/white"
+        app:layout_anchor="@id/button"
+        app:layout_anchorGravity="center" />
+  </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</merge>

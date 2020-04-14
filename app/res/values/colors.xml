@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="appColorPrimary">#febc31</color>
+  <color name="appColorPrimaryDark">#febc31</color>
+  <color name="appColorAccent">#febc31</color>
+  <color name="headerTextColor">#755616</color>
+
+  <color name="stadiaColor">#A61F1F</color>
+</resources>

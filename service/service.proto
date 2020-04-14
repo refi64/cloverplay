@@ -1,0 +1,85 @@
+syntax = "proto3";
+package cloverplay.proto;
+
+option java_package = "com.refi64.cloverplay";
+option java_outer_classname = "Protos";
+
+message Request {
+  Controller controller = 1;
+  repeated Event events = 2;
+}
+
+message Reply { string error = 1; }
+
+enum Controller { STADIA = 0; }
+
+// Keep in sync with gamepad.h
+
+enum Button {
+  BUTTON_A = 0;
+  BUTTON_B = 1;
+  BUTTON_X = 2;
+  BUTTON_Y = 3;
+  BUTTON_L1 = 4;
+  BUTTON_L3 = 5;
+  BUTTON_R1 = 6;
+  BUTTON_R3 = 7;
+  BUTTON_START = 8;
+  BUTTON_SELECT = 9;
+  BUTTON_HOME = 10;
+
+  BUTTON_STADIA_SCREENSHOT = 11;
+  BUTTON_STADIA_ASSISTANT = 12;
+}
+
+enum Joystick {
+  JOYSTICK_LEFT = 0;
+  JOYSTICK_RIGHT = 1;
+}
+
+enum JoystickAxis {
+  AXIS_X = 0;
+  AXIS_Y = 1;
+}
+
+enum Trigger {
+  TRIGGER_LEFT = 0;
+  TRIGGER_RIGHT = 1;
+}
+
+enum DpadDirection {
+  DPAD_NORTH = 0;
+  DPAD_SOUTH = 1;
+  DPAD_EAST = 2;
+  DPAD_WEST = 3;
+}
+
+message ButtonEvent {
+  Button button = 1;
+  bool pressed = 2;
+}
+
+message JoystickEvent {
+  Joystick joystick = 1;
+  JoystickAxis axis = 2;
+  double position = 3;
+}
+
+message TriggerEvent {
+  Trigger trigger = 1;
+  double position = 2;
+}
+
+message DpadEvent {
+  DpadDirection direction = 1;
+  bool pressed = 2;
+}
+
+message Event {
+  oneof event {
+    ButtonEvent button = 1;
+    JoystickEvent joystick = 2;
+    TriggerEvent trigger = 3;
+    DpadEvent dpad = 4;
+  }
+}

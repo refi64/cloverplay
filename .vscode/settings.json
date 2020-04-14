@@ -1,0 +1,24 @@
+{
+  "[starlark]": {
+    "editor.tabSize": 4
+  },
+  "files.exclude": {
+    ".brt/**": true,
+    ".clangd/**": true,
+    "bazel-*": true,
+    "bazel-*/**": true,
+    "third_party/**": true
+  },
+  "files.watcherExclude": {
+    "bazel-*/**": true,
+    ".brt/**": true,
+    ".clangd/**": true,
+    "third_party/**": true
+  },
+  "search.exclude": {
+    "bazel-*/**": true,
+    ".brt/**": true,
+    ".clangd/**": true,
+    "third_party/**": true
+  }
+}

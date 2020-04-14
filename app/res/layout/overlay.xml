@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000"
+    android:screenOrientation="landscape"
+    android:theme="@style/AppTheme">
+
+  <com.refi64.cloverplay.JoystickCanvasView
+      android:id="@+id/joystick_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:alpha="@dimen/overlay_alpha" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_down"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="80dp"
+      android:layout_marginBottom="28dp"
+      android:rotation="90"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:r_icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+      app:r_size="diagonal" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_up"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="80dp"
+      android:layout_marginBottom="132dp"
+      android:rotation="-90"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:r_icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+      app:r_size="diagonal" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_left"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="28dp"
+      android:layout_marginBottom="80dp"
+      android:rotation="-180"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:r_icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+      app:r_size="diagonal" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_right"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="132dp"
+      android:layout_marginBottom="80dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:r_icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+      app:r_size="diagonal" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_l2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="80dp"
+      android:layout_marginTop="8dp"
+      app:layout_constraintEnd_toStartOf="@id/button_more"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:r_size="l2"
+      app:r_text="L2" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_l1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="80dp"
+      app:layout_constraintEnd_toStartOf="@id/button_more"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/button_l2"
+      app:r_size="l1"
+      app:r_text="L1" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_more"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      app:layout_constraintEnd_toStartOf="@id/button_assistant"
+      app:layout_constraintStart_toEndOf="@id/button_l2"
+      app:layout_constraintTop_toTopOf="parent"
+      app:r_icon="@drawable/ic_more_horiz_black_24dp" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/button_assistant"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:b_icon="@drawable/ic_assistant_black_24dp"
+      app:layout_constraintEnd_toStartOf="@id/button_home"
+      app:layout_constraintStart_toEndOf="@id/button_more"
+      app:layout_constraintTop_toTopOf="parent"
+      app:mini="true" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_home"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      app:layout_constraintEnd_toStartOf="@id/button_screenshot"
+      app:layout_constraintStart_toEndOf="@id/button_assistant"
+      app:layout_constraintTop_toTopOf="parent"
+      app:r_icon="@drawable/ic_home_black_24dp" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/button_screenshot"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:b_icon="@drawable/ic_fullscreen_black_24dp"
+      app:layout_constraintEnd_toStartOf="@id/button_menu"
+      app:layout_constraintStart_toEndOf="@id/button_home"
+      app:layout_constraintTop_toTopOf="parent"
+      app:mini="true" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_menu"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      app:layout_constraintEnd_toStartOf="@id/button_r2"
+      app:layout_constraintStart_toEndOf="@id/button_screenshot"
+      app:layout_constraintTop_toTopOf="parent"
+      app:r_icon="@drawable/ic_menu_black_24dp" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_r2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:layout_marginEnd="80dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@id/button_menu"
+      app:layout_constraintTop_toTopOf="parent"
+      app:r_size="l2"
+      app:r_text="R2" />
+
+  <com.refi64.cloverplay.SmallRectControllerButtonView
+      android:id="@+id/button_r1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="80dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@id/button_menu"
+      app:layout_constraintTop_toBottomOf="@id/button_r2"
+      app:r_size="l1"
+      app:r_text="R1" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/button_a"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="80dp"
+      android:layout_marginBottom="28dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:letter="A" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/button_b"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="28dp"
+      android:layout_marginBottom="80dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:letter="B" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/button_x"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="132dp"
+      android:layout_marginBottom="80dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:letter="X" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/button_y"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="80dp"
+      android:layout_marginBottom="132dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:letter="Y" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/button_r3"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="28dp"
+      android:layout_marginBottom="184dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:letter="R3" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/button_l3"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="28dp"
+      android:layout_marginBottom="184dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:letter="L3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

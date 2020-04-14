@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<notices>
+  <notice>
+    <name>Abseil</name>
+    <url>https://abseil.io/</url>
+    <copyright>Copyright 2017 The Abseil Authors</copyright>
+    <license>Apache Software License 2.0</license>
+  </notice>
+
+  <notice>
+    <name>androidx</name>
+    <url>https://developer.android.com/jetpack/androidx</url>
+    <copyright>Copyright 2020 The Android Open Source Project</copyright>
+    <license>Apache Software License 2.0</license>
+  </notice>
+
+  <notice>
+    <name>{fmt}</name>
+    <url>https://fmt.dev/</url>
+    <copyright>Copyright 2012-present Victor Zverovich</copyright>
+    <license>MIT License</license>
+  </notice>
+
+  <notice>
+    <name>Gson</name>
+    <url>https://github.com/google/gson</url>
+    <copyright>Copyright (C) 2018 The Gson authors</copyright>
+    <license>Apache Software License 2.0</license>
+  </notice>
+
+  <notice>
+    <name>Guava</name>
+    <url>https://guava.dev/</url>
+    <copyright>Copyright (C) 2008 The Guava Authors</copyright>
+    <license>Apache Software License 2.0</license>
+  </notice>
+
+  <notice>
+    <name>Kotlin</name>
+    <url>https://kotlinlang.org/</url>
+    <copyright>Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+    </copyright>
+    <license>Apache Software License 2.0</license>
+  </notice>
+
+  <notice>
+    <name>libsu</name>
+    <url>https://github.com/topjohnwu/libsu</url>
+    <copyright>Copyright 2019 John "topjohnwu" Wu</copyright>
+    <license>Apache Software License 2.0</license>
+  </notice>
+
+  <notice>
+    <name>Magic Enum C++</name>
+    <url>https://github.com/Neargye/magic_enum</url>
+    <copyright>Copyright (c) 2019 - 2020 Daniil Goncharov</copyright>
+    <license>MIT License</license>
+  </notice>
+
+  <notice>
+    <name>Material Components for Android</name>
+    <url>https://material.io/</url>
+    <copyright>Copyright (C) 2019 The Android Open Source Project</copyright>
+    <license>Apache Software License 2.0</license>
+  </notice>
+
+  <notice>
+    <name>Protocol Buffers</name>
+    <url>https://developers.google.com/protocol-buffers/</url>
+    <copyright>Copyright 2008 Google Inc.</copyright>
+    <license>BSD 3-Clause License</license>
+  </notice>
+</notices>

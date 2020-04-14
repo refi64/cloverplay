@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/.project-data-dir.iml" filepath="$PROJECT_DIR$/.blaze/modules/.project-data-dir.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/.workspace.iml" filepath="$PROJECT_DIR$/.blaze/modules/.workspace.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.lib_base.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.lib_base.iml" />
+    </modules>
+  </component>
+</project>
