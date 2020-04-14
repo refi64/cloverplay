@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00000000"
-    android:screenOrientation="landscape"
-    android:theme="@style/AppTheme">
+    android:screenOrientation="landscape">
 
   <com.refi64.cloverplay.JoystickCanvasView
       android:id="@+id/joystick_view"
