@@ -62,6 +62,8 @@ task :sign do
 
   build_tools = Dir.glob('third_party/android-sdk/build-tools/*').first
 
+  rm [aligned, release], :force => true
+
   sh "#{build_tools}/zipalign -v -p 4 #{unsigned} #{aligned}"
   sh "#{build_tools}/apksigner sign --ks #{ks} --out #{release} #{aligned}"
 end
