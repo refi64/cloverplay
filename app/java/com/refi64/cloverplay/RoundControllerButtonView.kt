@@ -38,6 +38,10 @@ class RoundControllerButtonView(context: Context, attrs: AttributeSet) :
     findViewById<FloatingActionButton>(R.id.button).setOnTouchListener(l)
   }
 
+  override fun setOnLongClickListener(l: OnLongClickListener?) {
+    findViewById<FloatingActionButton>(R.id.button).setOnLongClickListener(l)
+  }
+
   override fun onFinishInflate() {
     super.onFinishInflate()
 

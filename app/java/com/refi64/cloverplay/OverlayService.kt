@@ -2,22 +2,32 @@ package com.refi64.cloverplay
 
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.content.*
 import android.graphics.PixelFormat
 import android.graphics.Rect
+import android.util.Log
 import android.view.*
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.forEach
+import androidx.core.view.updateLayoutParams
 
 class OverlayService : AccessibilityService() {
+  companion object {
+    private const val NOTIFICATION_CHANNEL_ID = "reactivate"
+  }
+
   private enum class Profile { Stadia, Xcloud }
 
   private var overlayView: View? = null
   private var cloverService = CloverService()
 
   private val windowManager get() = getSystemService(WindowManager::class.java)!!
+  private val notificationManager get() = getSystemService(NotificationManager::class.java)!!
+
+  private val overlayLayout get() = overlayView?.findViewById<ConstraintLayout>(R.id.layout)
 
   private val screenStateReceiver = object : BroadcastReceiver() {
     override fun onReceive(ctx: Context?, intent: Intent?) {
@@ -83,9 +93,6 @@ class OverlayService : AccessibilityService() {
     val inflater = LayoutInflater.from(ContextThemeWrapper(this, theme))
     val view = inflater.inflate(R.layout.overlay, null)
 
-//    val constraints = ConstraintSet()
-//    val layout = view.findViewById<ConstraintLayout>(R.id.layout)
-
     if (profile == Profile.Xcloud) {
       val toShow = listOf(R.id.button_view, R.id.button_xmenu)
       val toHide =
@@ -98,18 +105,16 @@ class OverlayService : AccessibilityService() {
       for (id in toShow) {
         view.findViewById<View>(id).visibility = View.VISIBLE
       }
+    }
 
-//      constraints.apply {
-//        clone(layout)
-//
-//        connect(R.id.button_l1, ConstraintSet.END, R.id.button_back, ConstraintSet.START)
-//        connect(R.id.button_l2, ConstraintSet.END, R.id.button_back, ConstraintSet.START)
-//
-//        connect(R.id.button_r1, ConstraintSet.START, R.id.button_start, ConstraintSet.END)
-//        connect(R.id.button_r2, ConstraintSet.START, R.id.button_start, ConstraintSet.END)
-//
-//        applyTo(layout)
-//      }
+    view.findViewById<View>(R.id.hide_button).setOnLongClickListener {
+      toggleViewVisibility(show = false)
+      true
+    }
+
+    view.findViewById<View>(R.id.show_button).setOnLongClickListener {
+      toggleViewVisibility(show = true)
+      true
     }
 
     attachMappedTouchListeners(view,
@@ -145,6 +150,8 @@ class OverlayService : AccessibilityService() {
       format = PixelFormat.TRANSLUCENT
       flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
 
+      gravity = Gravity.BOTTOM
+
       width = WindowManager.LayoutParams.MATCH_PARENT
       height = WindowManager.LayoutParams.MATCH_PARENT
     })
@@ -156,6 +163,33 @@ class OverlayService : AccessibilityService() {
       windowManager.removeView(view)
       overlayView = null
     }
+  }
+
+  private fun toggleViewVisibility(show: Boolean) {
+    val (currentState, nextState, layoutDimens) = if (show) {
+      Triple(View.GONE, View.VISIBLE, WindowManager.LayoutParams.MATCH_PARENT)
+    } else {
+      Triple(View.VISIBLE, View.GONE, WindowManager.LayoutParams.WRAP_CONTENT)
+    }
+
+    val view = overlayView!!
+    val layout = overlayLayout!!
+    layout.forEach { child ->
+      if (child.visibility == currentState) {
+        child.visibility = nextState
+      } else if (child.id == R.id.show_button) {
+        child.visibility = currentState
+      }
+    }
+
+    view.updateLayoutParams<WindowManager.LayoutParams> {
+      width = layoutDimens
+      height = layoutDimens
+    }
+
+    // Avoid an awkward animation.
+    windowManager.removeView(view)
+    windowManager.addView(view, view.layoutParams)
   }
 
   override fun onAccessibilityEvent(p0: AccessibilityEvent?) = updateState()
@@ -191,6 +225,7 @@ class OverlayService : AccessibilityService() {
     deactivate()
     unregisterReceiver(screenStateReceiver)
     cloverService.destroy()
+    notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_ID)
 
     super.onDestroy()
   }

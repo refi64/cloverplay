@@ -88,7 +88,7 @@
       android:id="@+id/button_view"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:visibility="gone"
+      android:visibility="invisible"
       app:b_flipY="true"
       app:b_icon="@drawable/ic_filter_none_black_24dp"
       app:layout_constraintEnd_toStartOf="@id/button_home"
@@ -150,7 +150,7 @@
       android:id="@+id/button_xmenu"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:visibility="gone"
+      android:visibility="invisible"
       app:b_icon="@drawable/ic_menu_black_24dp"
       app:layout_constraintEnd_toStartOf="@id/button_r2"
       app:layout_constraintStart_toEndOf="@id/button_home"
@@ -239,5 +239,28 @@
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:letter="L3" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/hide_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="28dp"
+      app:b_icon="@drawable/ic_arrow_drop_down_black_24dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:mini="true" />
+
+  <com.refi64.cloverplay.RoundControllerButtonView
+      android:id="@+id/show_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="28dp"
+      android:visibility="gone"
+      app:b_icon="@drawable/ic_arrow_drop_up_black_24dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:mini="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
