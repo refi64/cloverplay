@@ -4,6 +4,7 @@
     <attr name="letter" format="string" />
     <attr name="mini" format="boolean" />
     <attr name="b_icon" format="integer" />
+    <attr name="b_flipY" format="boolean" />
   </declare-styleable>
 
   <declare-styleable name="SmallRectControllerButtonView">

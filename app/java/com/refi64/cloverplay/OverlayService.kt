@@ -74,8 +74,8 @@ class OverlayService : AccessibilityService() {
               R.id.button_screenshot to Protos.Button.BUTTON_STADIA_SCREENSHOT))
       Profile.Xcloud -> Triple(R.style.XcloudOverlayTheme,
           Protos.Controller.XBOX360,
-          arrayOf(R.id.button_back to Protos.Button.BUTTON_SELECT,
-              R.id.button_start to Protos.Button.BUTTON_START))
+          arrayOf(R.id.button_view to Protos.Button.BUTTON_SELECT,
+              R.id.button_xmenu to Protos.Button.BUTTON_START))
     }
 
     cloverService.controller = controller
@@ -83,33 +83,33 @@ class OverlayService : AccessibilityService() {
     val inflater = LayoutInflater.from(ContextThemeWrapper(this, theme))
     val view = inflater.inflate(R.layout.overlay, null)
 
-    val constraints = ConstraintSet()
-    val layout = view.findViewById<ConstraintLayout>(R.id.layout)
+//    val constraints = ConstraintSet()
+//    val layout = view.findViewById<ConstraintLayout>(R.id.layout)
 
     if (profile == Profile.Xcloud) {
-      val toShow = listOf(R.id.button_back, R.id.button_start)
+      val toShow = listOf(R.id.button_view, R.id.button_xmenu)
       val toHide =
           listOf(R.id.button_assistant, R.id.button_screenshot, R.id.button_more, R.id.button_menu)
 
       for (id in toHide) {
-        view.findViewById<View>(id).visibility = View.GONE
+        view.findViewById<View>(id).visibility = View.INVISIBLE
       }
 
       for (id in toShow) {
         view.findViewById<View>(id).visibility = View.VISIBLE
       }
 
-      constraints.apply {
-        clone(layout)
-
-        connect(R.id.button_l1, ConstraintSet.END, R.id.button_back, ConstraintSet.START)
-        connect(R.id.button_l2, ConstraintSet.END, R.id.button_back, ConstraintSet.START)
-
-        connect(R.id.button_r1, ConstraintSet.START, R.id.button_start, ConstraintSet.END)
-        connect(R.id.button_r2, ConstraintSet.START, R.id.button_start, ConstraintSet.END)
-
-        applyTo(layout)
-      }
+//      constraints.apply {
+//        clone(layout)
+//
+//        connect(R.id.button_l1, ConstraintSet.END, R.id.button_back, ConstraintSet.START)
+//        connect(R.id.button_l2, ConstraintSet.END, R.id.button_back, ConstraintSet.START)
+//
+//        connect(R.id.button_r1, ConstraintSet.START, R.id.button_start, ConstraintSet.END)
+//        connect(R.id.button_r2, ConstraintSet.START, R.id.button_start, ConstraintSet.END)
+//
+//        applyTo(layout)
+//      }
     }
 
     attachMappedTouchListeners(view,

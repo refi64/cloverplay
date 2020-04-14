@@ -85,11 +85,12 @@
       app:r_text="L1" />
 
   <com.refi64.cloverplay.RoundControllerButtonView
-      android:id="@+id/button_back"
+      android:id="@+id/button_view"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:visibility="gone"
-      app:b_icon="@drawable/ic_arrow_back_black_24dp"
+      app:b_flipY="true"
+      app:b_icon="@drawable/ic_filter_none_black_24dp"
       app:layout_constraintEnd_toStartOf="@id/button_home"
       app:layout_constraintStart_toEndOf="@id/button_l2"
       app:layout_constraintTop_toTopOf="parent"
@@ -146,11 +147,11 @@
       app:r_icon="@drawable/ic_menu_black_24dp" />
 
   <com.refi64.cloverplay.RoundControllerButtonView
-      android:id="@+id/button_start"
+      android:id="@+id/button_xmenu"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:visibility="gone"
-      app:b_icon="@drawable/ic_arrow_forward_black_24dp"
+      app:b_icon="@drawable/ic_menu_black_24dp"
       app:layout_constraintEnd_toStartOf="@id/button_r2"
       app:layout_constraintStart_toEndOf="@id/button_home"
       app:layout_constraintTop_toTopOf="parent"

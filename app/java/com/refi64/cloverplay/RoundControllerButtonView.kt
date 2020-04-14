@@ -15,6 +15,7 @@ class RoundControllerButtonView(context: Context, attrs: AttributeSet) :
   private var letter: String? = null
   private var drawable: Drawable? = null
   private var mini: Boolean = false
+  private var flipY: Boolean = false
 
   init {
     context.theme.obtainStyledAttributes(attrs, R.styleable.RoundControllerButtonView, 0, 0).apply {
@@ -22,6 +23,7 @@ class RoundControllerButtonView(context: Context, attrs: AttributeSet) :
         letter = getString(R.styleable.RoundControllerButtonView_letter)
         drawable = getDrawable(R.styleable.RoundControllerButtonView_b_icon)
         mini = getBoolean(R.styleable.RoundControllerButtonView_mini, false)
+        flipY = getBoolean(R.styleable.RoundControllerButtonView_b_flipY, false)
       } finally {
         recycle()
       }
@@ -49,6 +51,10 @@ class RoundControllerButtonView(context: Context, attrs: AttributeSet) :
 
     if (mini) {
       findViewById<FloatingActionButton>(R.id.button).size = FloatingActionButton.SIZE_MINI
+    }
+
+    if (flipY) {
+      findViewById<ImageView>(R.id.icon).scaleY = -1.0f
     }
   }
 }

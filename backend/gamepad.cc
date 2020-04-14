@@ -9,11 +9,10 @@ namespace {
 constexpr UinputConnection::UsbDeviceProperties kStadiaProperties{0x18d1, 0x9400, 0x111,
                                                                   "Google Inc. Stadia Controller"};
 
-constexpr UinputConnection::UsbDeviceProperties kXbox360Properties{0x045e, 0x028e, 0x0 /*unknown*/,
-                                                                   "Microsoft X-Box 360 pad"};
+constexpr UinputConnection::UsbDeviceProperties kXbox360Properties{0x045e, 0x02ea, 0x301,
+                                                                   "Microsoft X-Box One S pad"};
 
 constexpr std::int32_t kCommonTriggerMin = 0;
-constexpr std::int32_t kCommonTriggerMax = 255;
 
 constexpr std::int32_t kCommonDpadMin = -1;
 constexpr std::int32_t kCommonDpadMax = +1;
@@ -23,10 +22,14 @@ constexpr std::int32_t kStadiaAxisFlat = 15;
 constexpr std::int32_t kStadiaJoystickMin = 1;
 constexpr std::int32_t kStadiaJoystickMax = 255;
 
+constexpr std::int32_t kStadiaTriggerMax = 255;
+
 constexpr std::int32_t kXbox360JoystickFlat = 128;
 constexpr std::int32_t kXbox360JoystickFuzz = 16;
 constexpr std::int32_t kXbox360JoystickMin = -32768;
 constexpr std::int32_t kXbox360JoystickMax = +32767;
+
+constexpr std::int32_t kXbox360TriggerMax = 1023;
 
 absl::flat_hash_map<Gamepad::Button, std::uint16_t> kCommonButtons{
     {Gamepad::Button::kA, BTN_A},         {Gamepad::Button::kB, BTN_B},
@@ -155,7 +158,7 @@ StatusOr<StadiaGamepad> StadiaGamepad::Create(UinputConnection* connection) {
 
   configuration.triggers.map = kStadiaSpecificTriggers;
   configuration.triggers.properties[UinputConnection::kAxisProp_Min] = kCommonTriggerMin;
-  configuration.triggers.properties[UinputConnection::kAxisProp_Max] = kCommonTriggerMax;
+  configuration.triggers.properties[UinputConnection::kAxisProp_Max] = kStadiaTriggerMax;
   configuration.triggers.properties[UinputConnection::kAxisProp_Flat] = kStadiaAxisFlat;
 
   configuration.dpad.map = kCommonDpad;
@@ -199,7 +202,7 @@ StatusOr<Xbox360Gamepad> Xbox360Gamepad::Create(UinputConnection* connection) {
 
   configuration.triggers.map = kXbox360SpecificTriggers;
   configuration.triggers.properties[UinputConnection::kAxisProp_Min] = kCommonTriggerMin;
-  configuration.triggers.properties[UinputConnection::kAxisProp_Max] = kCommonTriggerMax;
+  configuration.triggers.properties[UinputConnection::kAxisProp_Max] = kXbox360TriggerMax;
 
   configuration.dpad.map = kCommonDpad;
   configuration.dpad.properties[UinputConnection::kAxisProp_Min] = kCommonDpadMin;
