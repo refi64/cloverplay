@@ -12,7 +12,8 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@absl//absl/container:btree",
+        "@absl//absl/container:flat_hash_map",
+        "@absl//absl/container:flat_hash_set",
         "@absl//absl/status",
         "@fmt",
         "@magic_enum",

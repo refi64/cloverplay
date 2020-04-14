@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 
 #include "uinput.h"
 
@@ -55,17 +56,67 @@ class Gamepad {
   UinputUsbController controller_;
 };
 
-class StadiaGamepad : public Gamepad {
+class GamepadImplHelper : public Gamepad {
+ public:
+  absl::Status QueueButtonState(Button button, bool pressed) override;
+  absl::Status QueueTriggerState(Trigger trigger, double position) override;
+  absl::Status QueueDpadState(DpadDirection direction, bool pressed) override;
+
+  struct Configuration {
+    template <typename T, typename V = std::uint16_t>
+    struct Mapped {
+      absl::flat_hash_map<T, V> map;
+    };
+
+    template <typename T, typename V = std::uint16_t>
+    struct MappedWithAxes : Mapped<T, V> {
+      UinputConnection::AxisProperties properties = UinputConnection::ZeroAxisProperties();
+    };
+
+    struct DpadValue {
+      std::uint16_t axis;
+      std::int32_t value;
+    };
+
+    UinputConnection::UsbDeviceProperties properties;
+
+    Mapped<Gamepad::Button> buttons;
+    MappedWithAxes<Gamepad::JoystickWithAxis> joysticks;
+    MappedWithAxes<Gamepad::Trigger> triggers;
+    MappedWithAxes<Gamepad::DpadDirection, DpadValue> dpad;
+
+    StatusOr<UinputUsbController> CreateController(UinputConnection* connection);
+  };
+
+ protected:
+  GamepadImplHelper(UinputUsbController controller, Configuration configuration)
+      : Gamepad(std::move(controller)), configuration_(std::move(configuration)) {}
+
+  Configuration configuration_;
+};
+
+class StadiaGamepad : public GamepadImplHelper {
  public:
   static StatusOr<StadiaGamepad> Create(UinputConnection* connection);
   StadiaGamepad(StadiaGamepad&& other) = default;
   ~StadiaGamepad() {}
 
-  absl::Status QueueButtonState(Button button, bool pressed) override;
   absl::Status QueueJoystickState(Joystick joystick, JoystickAxis axis, double position) override;
-  absl::Status QueueTriggerState(Trigger trigger, double position) override;
-  absl::Status QueueDpadState(DpadDirection direction, bool pressed) override;
 
  protected:
-  StadiaGamepad(UinputUsbController controller) : Gamepad(std::move(controller)) {}
+  StadiaGamepad(UinputUsbController controller, GamepadImplHelper::Configuration configuration)
+      : GamepadImplHelper(std::move(controller), std::move(configuration)) {}
+};
+
+class Xbox360Gamepad : public GamepadImplHelper {
+ public:
+  static StatusOr<Xbox360Gamepad> Create(UinputConnection* connection);
+  Xbox360Gamepad(Xbox360Gamepad&& other) = default;
+  ~Xbox360Gamepad() {}
+
+  absl::Status QueueJoystickState(Joystick joystick, JoystickAxis axis, double position) override;
+
+ protected:
+  Xbox360Gamepad(UinputUsbController controller, GamepadImplHelper::Configuration configuration)
+      : GamepadImplHelper(std::move(controller), std::move(configuration)) {}
 };

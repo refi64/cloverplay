@@ -15,14 +15,16 @@ class Service {
   absl::Status Run();
 
  private:
-  Service(StadiaGamepad stadia) : stadia_(std::move(stadia)) {}
+  Service(StadiaGamepad stadia, Xbox360Gamepad xbox)
+      : stadia_(std::move(stadia)), xbox_(std::move(xbox)) {}
 
   absl::Status HandleRequest(std::string_view req_json);
 
-  absl::Status HandleButtonEvent(const proto::ButtonEvent& event);
-  absl::Status HandleJoystickEvent(const proto::JoystickEvent& event);
-  absl::Status HandleTriggerEvent(const proto::TriggerEvent& event);
-  absl::Status HandleDpadEvent(const proto::DpadEvent& event);
+  absl::Status HandleButtonEvent(Gamepad* gamepad, const proto::ButtonEvent& event);
+  absl::Status HandleJoystickEvent(Gamepad* gamepad, const proto::JoystickEvent& event);
+  absl::Status HandleTriggerEvent(Gamepad* gamepad, const proto::TriggerEvent& event);
+  absl::Status HandleDpadEvent(Gamepad* gamepad, const proto::DpadEvent& event);
 
   StadiaGamepad stadia_;
+  Xbox360Gamepad xbox_;
 };

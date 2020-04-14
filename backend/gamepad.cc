@@ -9,43 +9,74 @@ namespace {
 constexpr UinputConnection::UsbDeviceProperties kStadiaProperties{0x18d1, 0x9400, 0x111,
                                                                   "Google Inc. Stadia Controller"};
 
+constexpr UinputConnection::UsbDeviceProperties kXbox360Properties{0x045e, 0x028e, 0x0 /*unknown*/,
+                                                                   "Microsoft X-Box 360 pad"};
+
+constexpr std::int32_t kCommonTriggerMin = 0;
+constexpr std::int32_t kCommonTriggerMax = 255;
+
+constexpr std::int32_t kCommonDpadMin = -1;
+constexpr std::int32_t kCommonDpadMax = +1;
+
 constexpr std::int32_t kStadiaAxisFlat = 15;
 
 constexpr std::int32_t kStadiaJoystickMin = 1;
 constexpr std::int32_t kStadiaJoystickMax = 255;
 
-constexpr std::int32_t kStadiaTriggerMin = 0;
-constexpr std::int32_t kStadiaTriggerMax = 255;
+constexpr std::int32_t kXbox360JoystickFlat = 128;
+constexpr std::int32_t kXbox360JoystickFuzz = 16;
+constexpr std::int32_t kXbox360JoystickMin = -32768;
+constexpr std::int32_t kXbox360JoystickMax = +32767;
 
-constexpr std::int32_t kStadiaDpadMin = -1;
-constexpr std::int32_t kStadiaDpadMax = 1;
+absl::flat_hash_map<Gamepad::Button, std::uint16_t> kCommonButtons{
+    {Gamepad::Button::kA, BTN_A},         {Gamepad::Button::kB, BTN_B},
+    {Gamepad::Button::kX, BTN_X},         {Gamepad::Button::kY, BTN_Y},
 
-absl::btree_map<Gamepad::Button, std::uint16_t> kStadiaButtons{
-    {Gamepad::Button::kA, BTN_A},
-    {Gamepad::Button::kB, BTN_B},
-    {Gamepad::Button::kX, BTN_X},
-    {Gamepad::Button::kY, BTN_Y},
+    {Gamepad::Button::kL1, BTN_TL},       {Gamepad::Button::kR1, BTN_TR},
+    {Gamepad::Button::kL3, BTN_THUMBL},   {Gamepad::Button::kR3, BTN_THUMBR},
 
-    {Gamepad::Button::kL1, BTN_TL},
-    {Gamepad::Button::kR1, BTN_TR},
-    {Gamepad::Button::kL3, BTN_THUMBL},
-    {Gamepad::Button::kR3, BTN_THUMBR},
-
-    {Gamepad::Button::kStart, BTN_START},
-    {Gamepad::Button::kSelect, BTN_SELECT},
+    {Gamepad::Button::kStart, BTN_START}, {Gamepad::Button::kSelect, BTN_SELECT},
 
     {Gamepad::Button::kHome, BTN_MODE},
+};
 
+absl::flat_hash_map<Gamepad::Button, std::uint16_t> kStadiaSpecificButtons{
     {Gamepad::Button::kStadiaAssistant, BTN_TRIGGER_HAPPY1},
     {Gamepad::Button::kStadiaScreenshot, BTN_TRIGGER_HAPPY2},
 };
 
-absl::btree_map<Gamepad::JoystickWithAxis, std::uint16_t> kStadiaJoystickAxes{
+absl::flat_hash_map<Gamepad::JoystickWithAxis, std::uint16_t> kCommonJoystickAxes{
     {Gamepad::JoystickWithAxis::kLeftX, ABS_X},
     {Gamepad::JoystickWithAxis::kLeftY, ABS_Y},
+};
+
+absl::flat_hash_map<Gamepad::JoystickWithAxis, std::uint16_t> kStadiaSpecificJoystickAxes{
     {Gamepad::JoystickWithAxis::kRightX, ABS_Z},
     {Gamepad::JoystickWithAxis::kRightY, ABS_RZ},
 };
+
+absl::flat_hash_map<Gamepad::JoystickWithAxis, std::uint16_t> kXbox360SpecificJoystickAxes{
+    {Gamepad::JoystickWithAxis::kRightX, ABS_RX},
+    {Gamepad::JoystickWithAxis::kRightY, ABS_RY},
+};
+
+absl::flat_hash_map<Gamepad::Trigger, std::uint16_t> kStadiaSpecificTriggers{
+    {Gamepad::Trigger::kLeft, ABS_BRAKE},
+    {Gamepad::Trigger::kRight, ABS_GAS},
+};
+
+absl::flat_hash_map<Gamepad::Trigger, std::uint16_t> kXbox360SpecificTriggers{
+    {Gamepad::Trigger::kLeft, ABS_Z},
+    {Gamepad::Trigger::kRight, ABS_RZ},
+};
+
+absl::flat_hash_map<Gamepad::DpadDirection, GamepadImplHelper::Configuration::DpadValue>
+    kCommonDpad{
+        {Gamepad::DpadDirection::kNorth, {ABS_HAT0Y, kCommonDpadMin}},
+        {Gamepad::DpadDirection::kSouth, {ABS_HAT0Y, kCommonDpadMax}},
+        {Gamepad::DpadDirection::kWest, {ABS_HAT0X, kCommonDpadMin}},
+        {Gamepad::DpadDirection::kEast, {ABS_HAT0X, kCommonDpadMax}},
+    };
 
 template <typename I, typename F>
 I rounding_cast(F value) {
@@ -60,48 +91,84 @@ Gamepad::JoystickWithAxis Gamepad::GetJoystickWithAxis(Joystick joystick, Joysti
                                                   magic_enum::enum_integer(axis));
 }
 
+StatusOr<UinputUsbController>
+GamepadImplHelper::Configuration::CreateController(UinputConnection* connection) {
+  UinputUsbController::AxisMap axes;
+  UinputUsbController::ButtonSet button_set;
+
+  for (const auto [_, axis] : joysticks.map) {
+    axes[axis] = joysticks.properties;
+  }
+
+  for (const auto [_, axis] : triggers.map) {
+    axes[axis] = triggers.properties;
+  }
+
+  for (const auto [_, dpad_button] : dpad.map) {
+    axes[dpad_button.axis] = dpad.properties;
+  }
+
+  for (const auto [_, button] : buttons.map) {
+    button_set.insert(button);
+  }
+
+  return UinputUsbController::Create(connection, properties, std::move(axes),
+                                     std::move(button_set));
+}
+
+absl::Status GamepadImplHelper::QueueButtonState(Button button, bool pressed) /*override*/ {
+  return controller()->QueueButtonEvent(configuration_.buttons.map[button], pressed);
+}
+
+absl::Status GamepadImplHelper::QueueTriggerState(Trigger trigger, double position) /*override*/ {
+  std::uint16_t axis_code = configuration_.triggers.map[trigger];
+  std::int32_t scaled_position = rounding_cast<std::int32_t>(
+      position * configuration_.triggers.properties[UinputConnection::kAxisProp_Max]);
+
+  return controller()->QueueAxisEvent(axis_code, scaled_position);
+}
+
+absl::Status GamepadImplHelper::QueueDpadState(DpadDirection direction, bool pressed) /*override*/ {
+  Configuration::DpadValue dpad = configuration_.dpad.map[direction];
+  std::uint16_t axis_code = dpad.axis;
+  std::int32_t position = pressed ? dpad.value : 0;
+
+  return controller()->QueueAxisEvent(axis_code, position);
+}
+
 // static
 StatusOr<StadiaGamepad> StadiaGamepad::Create(UinputConnection* connection) {
   UinputUsbController::AxisMap axes;
+  Configuration configuration;
 
-  std::uint16_t joystick_axes[] = {ABS_X, ABS_Y, ABS_Z, ABS_RZ};
-  std::uint16_t trigger_axes[] = {ABS_GAS, ABS_BRAKE};
-  std::uint16_t dpad_axes[] = {ABS_HAT0X, ABS_HAT0Y};
+  configuration.properties = kStadiaProperties;
 
-  for (std::uint16_t axis : joystick_axes) {
-    axes[axis][UinputConnection::kAxisProp_Min] = kStadiaJoystickMin;
-    axes[axis][UinputConnection::kAxisProp_Max] = kStadiaJoystickMax;
-    axes[axis][UinputConnection::kAxisProp_Flat] = kStadiaAxisFlat;
-  }
+  configuration.buttons.map = kCommonButtons;
+  configuration.buttons.map.merge(kStadiaSpecificButtons);
 
-  for (std::uint16_t axis : trigger_axes) {
-    axes[axis][UinputConnection::kAxisProp_Min] = kStadiaTriggerMin;
-    axes[axis][UinputConnection::kAxisProp_Max] = kStadiaTriggerMax;
-    axes[axis][UinputConnection::kAxisProp_Flat] = kStadiaAxisFlat;
-  }
+  configuration.joysticks.map = kCommonJoystickAxes;
+  configuration.joysticks.map.merge(kStadiaSpecificJoystickAxes);
 
-  for (std::uint16_t axis : dpad_axes) {
-    axes[axis][UinputConnection::kAxisProp_Min] = kStadiaDpadMin;
-    axes[axis][UinputConnection::kAxisProp_Max] = kStadiaDpadMax;
-  }
+  configuration.joysticks.properties[UinputConnection::kAxisProp_Min] = kStadiaJoystickMin;
+  configuration.joysticks.properties[UinputConnection::kAxisProp_Max] = kStadiaJoystickMax;
+  configuration.joysticks.properties[UinputConnection::kAxisProp_Flat] = kStadiaAxisFlat;
 
-  UinputUsbController::ButtonSet buttons;
-  for (const auto& pair : kStadiaButtons) {
-    buttons.insert(pair.second);
-  }
+  configuration.triggers.map = kStadiaSpecificTriggers;
+  configuration.triggers.properties[UinputConnection::kAxisProp_Min] = kCommonTriggerMin;
+  configuration.triggers.properties[UinputConnection::kAxisProp_Max] = kCommonTriggerMax;
+  configuration.triggers.properties[UinputConnection::kAxisProp_Flat] = kStadiaAxisFlat;
 
-  UinputUsbController controller = TRY_STATUS_OR(UinputUsbController::Create(
-      connection, kStadiaProperties, std::move(axes), std::move(buttons)));
-  return StadiaGamepad(std::move(controller));
-}
+  configuration.dpad.map = kCommonDpad;
+  configuration.dpad.properties[UinputConnection::kAxisProp_Min] = kCommonDpadMin;
+  configuration.dpad.properties[UinputConnection::kAxisProp_Max] = kCommonDpadMax;
 
-absl::Status StadiaGamepad::QueueButtonState(Button button, bool pressed) /*override*/ {
-  return controller()->QueueButtonEvent(kStadiaButtons[button], pressed);
+  UinputUsbController controller = TRY_STATUS_OR(configuration.CreateController(connection));
+  return StadiaGamepad(std::move(controller), std::move(configuration));
 }
 
 absl::Status StadiaGamepad::QueueJoystickState(Joystick joystick, JoystickAxis axis,
                                                double position) /*override*/ {
-  std::uint16_t axis_code = kStadiaJoystickAxes[GetJoystickWithAxis(joystick, axis)];
+  std::uint16_t axis_code = configuration_.joysticks.map[GetJoystickWithAxis(joystick, axis)];
 
   // Position ranges from [-1,1], so add 1 and divide by 2 to make it [0,1], then a clean
   // multiply by [kStadiaJoystickMin,kStadiaJoystickMax] will scale it.
@@ -113,47 +180,44 @@ absl::Status StadiaGamepad::QueueJoystickState(Joystick joystick, JoystickAxis a
   return controller()->QueueAxisEvent(axis_code, scaled_position);
 }
 
-absl::Status StadiaGamepad::QueueTriggerState(Trigger trigger, double position) /*override*/ {
-  std::uint16_t axis_code;
-  switch (trigger) {
-  case Trigger::kLeft:
-    axis_code = ABS_BRAKE;
-    break;
-  case Trigger::kRight:
-    axis_code = ABS_GAS;
-    break;
-  }
+// static
+StatusOr<Xbox360Gamepad> Xbox360Gamepad::Create(UinputConnection* connection) {
+  UinputUsbController::AxisMap axes;
+  Configuration configuration;
 
-  std::int32_t scaled_position = rounding_cast<std::int32_t>(position * kStadiaTriggerMax);
+  configuration.properties = kXbox360Properties;
 
-  return controller()->QueueAxisEvent(axis_code, scaled_position);
+  configuration.buttons.map = kCommonButtons;
+
+  configuration.joysticks.map = kCommonJoystickAxes;
+  configuration.joysticks.map.merge(kXbox360SpecificJoystickAxes);
+
+  configuration.joysticks.properties[UinputConnection::kAxisProp_Min] = kXbox360JoystickMin;
+  configuration.joysticks.properties[UinputConnection::kAxisProp_Max] = kXbox360JoystickMax;
+  configuration.joysticks.properties[UinputConnection::kAxisProp_Flat] = kXbox360JoystickFlat;
+  configuration.joysticks.properties[UinputConnection::kAxisProp_Fuzz] = kXbox360JoystickFuzz;
+
+  configuration.triggers.map = kXbox360SpecificTriggers;
+  configuration.triggers.properties[UinputConnection::kAxisProp_Min] = kCommonTriggerMin;
+  configuration.triggers.properties[UinputConnection::kAxisProp_Max] = kCommonTriggerMax;
+
+  configuration.dpad.map = kCommonDpad;
+  configuration.dpad.properties[UinputConnection::kAxisProp_Min] = kCommonDpadMin;
+  configuration.dpad.properties[UinputConnection::kAxisProp_Max] = kCommonDpadMax;
+
+  UinputUsbController controller = TRY_STATUS_OR(configuration.CreateController(connection));
+  return Xbox360Gamepad(std::move(controller), std::move(configuration));
 }
 
-absl::Status StadiaGamepad::QueueDpadState(DpadDirection direction, bool pressed) /*override*/ {
-  std::uint16_t axis_code;
-  std::int32_t position;
+absl::Status Xbox360Gamepad::QueueJoystickState(Joystick joystick, JoystickAxis axis,
+                                                double position) /*override*/ {
+  std::uint16_t axis_code = configuration_.joysticks.map[GetJoystickWithAxis(joystick, axis)];
 
-  switch (direction) {
-  case DpadDirection::kNorth:
-    axis_code = ABS_HAT0Y;
-    position = -1;
-    break;
-  case DpadDirection::kSouth:
-    axis_code = ABS_HAT0Y;
-    position = 1;
-    break;
-  case DpadDirection::kEast:
-    axis_code = ABS_HAT0X;
-    position = 1;
-    break;
-  case DpadDirection::kWest:
-    axis_code = ABS_HAT0X;
-    position = -1;
-  }
+  // Accomodate the right scale being ever-so-slightly larger than the left.
+  std::int32_t scaled_position =
+      position * (position >= 0 ? kXbox360JoystickMax : -kXbox360JoystickMin);
+  // Sanity check.
+  scaled_position = std::clamp(scaled_position, kXbox360JoystickMin, kXbox360JoystickMax);
 
-  if (!pressed) {
-    position = 0;
-  }
-
-  return controller()->QueueAxisEvent(axis_code, position);
+  return controller()->QueueAxisEvent(axis_code, scaled_position);
 }

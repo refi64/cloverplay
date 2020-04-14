@@ -11,6 +11,7 @@ import java.io.BufferedWriter
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class CloverService {
@@ -19,6 +20,8 @@ class CloverService {
   private var processStdout: BufferedReader? = null
 
   private var tag = "CloverService"
+
+  lateinit var controller: Protos.Controller
 
   fun start(context: Context) {
     assert(process == null)
@@ -41,9 +44,9 @@ class CloverService {
   }
 
   private fun sendRequest(event: Protos.Event) {
-    val request = Protos.Request.newBuilder().apply {
-      controller = Protos.Controller.STADIA
-      addEvents(event)
+    val request = Protos.Request.newBuilder().let { builder ->
+      builder.controller = controller
+      builder.addEvents(event)
     }.build()
 
     val json = JsonFormat.printer().omittingInsignificantWhitespace().print(request)

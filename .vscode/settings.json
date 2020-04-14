@@ -20,5 +20,5 @@
     ".brt/**": true,
     ".clangd/**": true,
     "third_party/**": true
-  }
+  },
 }

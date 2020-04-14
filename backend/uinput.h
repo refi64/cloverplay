@@ -5,8 +5,8 @@
 #include <optional>
 #include <string_view>
 
-#include "absl/container/btree_map.h"
-#include "absl/container/btree_set.h"
+#include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "magic_enum.hpp"
 
 #include "errors.h"
@@ -31,6 +31,12 @@ class UinputConnection {
 
   static constexpr std::size_t kAxisPropCount = magic_enum::enum_count<AxisPropertyKeys>();
   using AxisProperties = std::array<std::int32_t, kAxisPropCount>;
+
+  static AxisProperties ZeroAxisProperties() {
+    AxisProperties properties;
+    properties.fill(0);
+    return properties;
+  }
 
   UinputConnection(const UinputConnection& other) = delete;
   UinputConnection(UinputConnection&& other);
@@ -66,8 +72,8 @@ class UinputUsbController {
     }
   }
 
-  using AxisMap = absl::btree_map<std::uint16_t, UinputConnection::AxisProperties>;
-  using ButtonSet = absl::btree_set<std::uint16_t>;
+  using AxisMap = absl::flat_hash_map<std::uint16_t, UinputConnection::AxisProperties>;
+  using ButtonSet = absl::flat_hash_set<std::uint16_t>;
 
   static StatusOr<UinputUsbController> Create(UinputConnection* connection,
                                               UinputConnection::UsbDeviceProperties properties,

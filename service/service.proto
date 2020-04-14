@@ -11,7 +11,10 @@ message Request {
 
 message Reply { string error = 1; }
 
-enum Controller { STADIA = 0; }
+enum Controller {
+  STADIA = 0;
+  XBOX360 = 1;
+}
 
 // Keep in sync with gamepad.h
 

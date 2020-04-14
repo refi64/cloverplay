@@ -99,11 +99,10 @@ absl::Status UinputConnection::DestroyUsbDevice() {
 }
 
 // static
-StatusOr<UinputUsbController>
-UinputUsbController::Create(UinputConnection* connection,
-                            UinputConnection::UsbDeviceProperties properties,
-                            absl::btree_map<std::uint16_t, UinputConnection::AxisProperties> axes,
-                            absl::btree_set<std::uint16_t> buttons) {
+StatusOr<UinputUsbController> UinputUsbController::Create(
+    UinputConnection* connection, UinputConnection::UsbDeviceProperties properties,
+    absl::flat_hash_map<std::uint16_t, UinputConnection::AxisProperties> axes,
+    absl::flat_hash_set<std::uint16_t> buttons) {
   if (!axes.empty()) {
     TRY_STATUS(connection->EnableType(UI_SET_EVBIT, EV_ABS));
     for (const auto& pair : axes) {

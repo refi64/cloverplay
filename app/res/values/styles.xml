@@ -18,6 +18,12 @@
     <item name="colorAccent">@color/stadiaColor</item>
   </style>
 
+  <style name="XcloudOverlayTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <item name="colorPrimary">@color/xcloudColor</item>
+    <item name="colorPrimaryDark">@color/xcloudColor</item>
+    <item name="colorAccent">@color/xcloudColor</item>
+  </style>
+
   <style name="ShapeAppearanceOverlay.Cloverplay.Card" parent="">
     <item name="cornerFamilyTopLeft">rounded</item>
     <item name="cornerFamilyTopRight">rounded</item>
