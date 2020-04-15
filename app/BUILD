@@ -48,6 +48,10 @@ android_binary(
     name = "cloverplay",
     custom_package = "com.refi64.cloverplay",
     manifest = "AndroidManifest.xml",
+    manifest_values = {
+        "versionCode": "1",
+        "versionName": "0.1",
+    },
     multidex = "native",
     # proguard_specs = select({
     #     "//:release": ["proguard-rules.pro"],
