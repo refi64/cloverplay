@@ -74,6 +74,7 @@ maven_install(
         "androidx.constraintlayout:constraintlayout:1.1.3",
         "androidx.core:core-ktx:1.0.2",
         "androidx.multidex:multidex:2.0.1",
+        "androidx.preference:preference:1.1.0",
         "com.github.topjohnwu.libsu:core:2.5.1",
         "com.google.android.material:material:1.1.0",
         "com.google.code.gson:gson:2.8.6",

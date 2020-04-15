@@ -37,6 +37,7 @@ kt_android_library(
         "@maven//:androidx_core_core",
         "@maven//:androidx_core_core_ktx",
         "@maven//:androidx_multidex_multidex",
+        "@maven//:androidx_preference_preference",
         "@maven//:com_github_topjohnwu_libsu_core",
         "@maven//:com_google_android_material_material",
         "@maven//:de_psdev_licensesdialog_licensesdialog",

@@ -15,8 +15,9 @@ class JoystickEvent(val joystick: Joystick, val state: State) {
 
 typealias OnJoystickEventListener = (event: JoystickEvent) -> Unit
 
+const val DEFAULT_RADIUS = 64.0f
+
 class JoystickCanvasView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-  private val defaultRadius = 64.0f
   private val positionRadius = 16.0f
   private val joystickStrokeWidth = 2.0f
 
@@ -26,6 +27,7 @@ class JoystickCanvasView(context: Context, attrs: AttributeSet) : View(context, 
   private var pointerIdsToSides = TreeMap<Int, Joystick.Side>()
 
   var joystickEventListener: OnJoystickEventListener? = null
+  var radius = DEFAULT_RADIUS
 
   private val joystickPaints = arrayOf(Paint().apply {
     style = Paint.Style.FILL
@@ -63,7 +65,7 @@ class JoystickCanvasView(context: Context, attrs: AttributeSet) : View(context, 
           return false
         }
 
-        val joystick = Joystick(point, defaultRadius * density, side)
+        val joystick = Joystick(point, radius * density, side)
         joysticks[side] = joystick
         pointerIdsToSides[id] = side
 

@@ -6,13 +6,13 @@ import android.app.NotificationManager
 import android.content.*
 import android.graphics.PixelFormat
 import android.graphics.Rect
-import android.util.Log
 import android.view.*
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.forEach
 import androidx.core.view.updateLayoutParams
+import androidx.preference.PreferenceManager
 
 class OverlayService : AccessibilityService() {
   companion object {
@@ -21,11 +21,32 @@ class OverlayService : AccessibilityService() {
 
   private enum class Profile { Stadia, Xcloud }
 
+  private val leftButtons = listOf(R.id.button_left,
+      R.id.button_right,
+      R.id.button_up,
+      R.id.button_down,
+      R.id.button_l1,
+      R.id.button_l2,
+      R.id.button_l3,
+      R.id.show_button,
+      R.id.hide_button)
+
+  private val rightButtons = listOf(R.id.button_a,
+      R.id.button_b,
+      R.id.button_x,
+      R.id.button_y,
+      R.id.button_r1,
+      R.id.button_r2,
+      R.id.button_r3,
+      R.id.show_button,
+      R.id.hide_button)
+
   private var overlayView: View? = null
   private var cloverService = CloverService()
 
   private val windowManager get() = getSystemService(WindowManager::class.java)!!
   private val notificationManager get() = getSystemService(NotificationManager::class.java)!!
+  private val preferences get() = PreferenceManager.getDefaultSharedPreferences(this)
 
   private val overlayLayout get() = overlayView?.findViewById<ConstraintLayout>(R.id.layout)
 
@@ -68,6 +89,9 @@ class OverlayService : AccessibilityService() {
       view.findViewById<View>(pair.first).setOnTouchListener(listenerFactory(pair.second))
     }
   }
+
+  private fun getScaledMargins(key: String): Int =
+      (preferences.getInt(key, 0) * resources.displayMetrics.density).toInt()
 
   @SuppressLint("InflateParams")
   private fun activateProfile(profile: Profile) {
@@ -142,8 +166,22 @@ class OverlayService : AccessibilityService() {
         R.id.button_l2 to Protos.Trigger.TRIGGER_LEFT,
         R.id.button_r2 to Protos.Trigger.TRIGGER_RIGHT)
 
-    view.findViewById<JoystickCanvasView>(R.id.joystick_view).joystickEventListener =
-        cloverService.createJoystickEventListener()
+    view.findViewById<JoystickCanvasView>(R.id.joystick_view).apply {
+      joystickEventListener = cloverService.createJoystickEventListener()
+      radius = preferences.getInt("joystick_radius", DEFAULT_RADIUS.toInt()).toFloat()
+    }
+
+    for (id in leftButtons) {
+      view.findViewById<View>(id).updateLayoutParams<ConstraintLayout.LayoutParams> {
+        leftMargin += getScaledMargins("left_margin")
+      }
+    }
+
+    for (id in rightButtons) {
+      view.findViewById<View>(id).updateLayoutParams<ConstraintLayout.LayoutParams> {
+        rightMargin += getScaledMargins("right_margin")
+      }
+    }
 
     windowManager.addView(view, WindowManager.LayoutParams().apply {
       type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
@@ -152,10 +190,14 @@ class OverlayService : AccessibilityService() {
 
       gravity = Gravity.BOTTOM
 
-      width = WindowManager.LayoutParams.MATCH_PARENT
-      height = WindowManager.LayoutParams.MATCH_PARENT
+      restoreDefaultLayoutParams(this)
     })
     overlayView = view
+  }
+
+  private fun restoreDefaultLayoutParams(params: WindowManager.LayoutParams) {
+    params.width = WindowManager.LayoutParams.MATCH_PARENT
+    params.height = WindowManager.LayoutParams.MATCH_PARENT
   }
 
   private fun deactivate() {
@@ -166,10 +208,10 @@ class OverlayService : AccessibilityService() {
   }
 
   private fun toggleViewVisibility(show: Boolean) {
-    val (currentState, nextState, layoutDimens) = if (show) {
-      Triple(View.GONE, View.VISIBLE, WindowManager.LayoutParams.MATCH_PARENT)
+    val (currentState, nextState) = if (show) {
+      Pair(View.GONE, View.VISIBLE)
     } else {
-      Triple(View.VISIBLE, View.GONE, WindowManager.LayoutParams.WRAP_CONTENT)
+      Pair(View.VISIBLE, View.GONE)
     }
 
     val view = overlayView!!
@@ -183,8 +225,12 @@ class OverlayService : AccessibilityService() {
     }
 
     view.updateLayoutParams<WindowManager.LayoutParams> {
-      width = layoutDimens
-      height = layoutDimens
+      if (show) {
+        restoreDefaultLayoutParams(this)
+      } else {
+        width = WindowManager.LayoutParams.WRAP_CONTENT
+        height = WindowManager.LayoutParams.WRAP_CONTENT
+      }
     }
 
     // Avoid an awkward animation.

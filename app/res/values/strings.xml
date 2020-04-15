@@ -7,17 +7,21 @@
   <string name="root_failure_message">Root access is required to use Cloverplay.</string>
   <string name="root_failure_retry">Retry</string>
   <string name="root_failure_quit">Quit</string>
+  <string name="menu_prefs">Preferences</string>
   <string name="menu_licenses">Licenses</string>
   <string name="menu_about">About</string>
   <string name="accessibility_service_label">Cloverplay Overlay Service</string>
   <string name="accessibility_service_descr">
-        Cloverplay uses the accessibility service to detect when Stadia is running and display the
-        touch controls overlay.
+        Cloverplay uses the accessibility service to detect when Stadia or xCloud is running and
+        display the touch controls overlay.
     </string>
   <string name="home_text">
         If the accessibility service is enabled, Cloverplay will automatically appear when Stadia
-        is opened. If you want to use the native controller, or you don\'t want it to appear,
-        turn this off.
+        or xCloud is opened. If you want to use the native controller, or you don\'t want it to
+        appear, turn this off.
     </string>
   <string name="home_toggle">Enable service</string>
+  <string name="pref_left_margin">Left margin</string>
+  <string name="pref_right_margin">Right margin</string>
+  <string name="pref_joystick_radius">Joystick radius</string>
 </resources>

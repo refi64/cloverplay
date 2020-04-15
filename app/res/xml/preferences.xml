@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+  <SeekBarPreference
+      android:defaultValue="0"
+      android:key="left_margin"
+      android:max="128"
+      android:title="@string/pref_left_margin"
+      app:showSeekBarValue="true" />
+  <SeekBarPreference
+      android:defaultValue="0"
+      android:key="right_margin"
+      android:max="128"
+      android:title="@string/pref_right_margin"
+      app:showSeekBarValue="true" />
+  <SeekBarPreference
+      android:defaultValue="64"
+      android:key="joystick_radius"
+      android:max="128"
+      android:title="@string/pref_joystick_radius"
+      app:showSeekBarValue="true" />
+</androidx.preference.PreferenceScreen>

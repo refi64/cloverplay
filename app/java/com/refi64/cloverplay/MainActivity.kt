@@ -12,8 +12,6 @@ import android.widget.PopupMenu
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.topjohnwu.superuser.Shell
 import de.psdev.licensesdialog.LicensesDialog
-import de.psdev.licensesdialog.model.Notice
-import de.psdev.licensesdialog.model.Notices
 
 class MainActivity : AppCompatActivity() {
   companion object {
@@ -50,6 +48,10 @@ class MainActivity : AppCompatActivity() {
 
     popup.setOnMenuItemClickListener { item ->
       when (item.itemId) {
+        R.id.prefs -> {
+          val intent = Intent(this, SettingsActivity::class.java)
+          startActivity(intent)
+        }
         R.id.licenses -> LicensesDialog.Builder(this).apply {
           setNotices(R.raw.notices)
           setIncludeOwnLicense(true)
