@@ -32,7 +32,7 @@ local OfficialBazelRulesSnapshot(repo, revision) =
       url: AndroidSdkComponentUrl('platform'),
       dest: 'third_party/android-sdk/platforms',
       arc: {
-        post: std.format('mv android-* android-%s', android_sdk_components.platform.version),
+        post: std.format('mv $BRT_EXTRACTED/{android-*,android-%s}', android_sdk_components.platform.version),
       },
     },
     {
@@ -49,7 +49,7 @@ local OfficialBazelRulesSnapshot(repo, revision) =
       url: AndroidSdkComponentUrl('build_tool'),
       dest: 'third_party/android-sdk/build-tools',
       arc: {
-        post: std.format('mv android-* %s', android_sdk_components.build_tool.version),
+        post: std.format('mv $BRT_EXTRACTED/{android-*,%s}', android_sdk_components.build_tool.version),
       },
     },
     {
