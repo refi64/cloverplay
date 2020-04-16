@@ -3,9 +3,11 @@ load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_android_library")
 load("//:build/java_build_config.bzl", "java_build_config")
 load("@build_stack_rules_proto//java:java_proto_compile.bzl", "java_proto_compile")
 
+PACKAGE = "com.refi64.cloverplay"
+
 java_build_config(
     name = "build_config",
-    package = "com.refi64.cloverplay",
+    package = PACKAGE,
 )
 
 java_proto_compile(
@@ -23,7 +25,7 @@ kt_android_library(
         "//service:clover_service",
     ],
     assets_dir = ".",
-    custom_package = "com.refi64.cloverplay",
+    custom_package = PACKAGE,
     data = [
         "//service:clover_service",
     ],
@@ -46,7 +48,7 @@ kt_android_library(
 
 android_binary(
     name = "cloverplay",
-    custom_package = "com.refi64.cloverplay",
+    custom_package = PACKAGE,
     manifest = "AndroidManifest.xml",
     manifest_values = {
         "versionCode": "1",
@@ -59,9 +61,5 @@ android_binary(
     # }),
     resource_files = glob(["res/**"]),
     visibility = ["//visibility:public"],
-    deps = [
-        ":lib",
-        "@maven//:androidx_constraintlayout_constraintlayout",
-        "@maven//:com_google_android_material_material",
-    ],
+    deps = [":lib"],
 )
