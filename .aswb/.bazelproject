@@ -6,7 +6,9 @@ directories:
 targets:
   # Add targets that reach the source code that you want to resolve here
   # By default, we've added all targets in your workspace
-  //app:cloverplay
+  #//app:cloverplay_paid
+  //app:cloverplay_trial
+  #//app:cloverplay_long_trial
 
 additional_languages:
   # Uncomment any additional languages you want supported

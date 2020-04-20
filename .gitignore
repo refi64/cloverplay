@@ -5,4 +5,5 @@
 bazel-*
 compile_commands.json
 third_party/
+user.bazelrc
 *.keystore

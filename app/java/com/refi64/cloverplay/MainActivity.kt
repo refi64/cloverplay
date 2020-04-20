@@ -9,9 +9,13 @@ import android.provider.Settings
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.PopupMenu
+import android.widget.TextView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.topjohnwu.superuser.Shell
 import de.psdev.licensesdialog.LicensesDialog
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class MainActivity : AppCompatActivity() {
   companion object {
@@ -25,8 +29,7 @@ class MainActivity : AppCompatActivity() {
 
   private val serviceName: String
     get() {
-      val packageName = applicationContext.packageName
-      return "$packageName/$packageName.OverlayService"
+      return "${BuildConfig.APPLICATION_ID}/com.refi64.cloverplay.OverlayService"
     }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,8 +41,25 @@ class MainActivity : AppCompatActivity() {
       toggleService(button, isChecked)
     }
 
-    checkRootAccess()
-    updateServiceState()
+    val trialText = findViewById<TextView>(R.id.trial_state)
+    trialText.setText(R.string.trial_check)
+
+    TrialProvider.getProvider(this).provide { state ->
+      if (state.expired) {
+        trialText.setText(R.string.trial_expired)
+      } else {
+        if (state.expiration != null) {
+          val expiration = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+              .withZone(ZoneId.systemDefault()).format(state.expiration)
+          trialText.text = resources.getString(R.string.trial_expires_soon, expiration)
+        } else {
+          trialText.text = ""
+        }
+
+        checkRootAccess()
+        updateServiceState()
+      }
+    }
   }
 
   fun onMenuButtonClick(view: View?) {

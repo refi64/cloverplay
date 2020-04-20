@@ -79,11 +79,13 @@ maven_install(
         "com.google.android.material:material:1.1.0",
         "com.google.code.gson:gson:2.8.6",
         "de.psdev.licensesdialog:licensesdialog:2.1.0",
+        "io.trialy.library:trialy:1.0.9",
     ],
     generate_compat_repositories = True,
     repositories = [
         "https://maven.google.com",
         "https://repo1.maven.org/maven2",
+        "https://jcenter.bintray.com/",
         "https://jitpack.io",
     ],
 )

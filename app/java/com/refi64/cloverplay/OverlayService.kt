@@ -70,7 +70,13 @@ class OverlayService : AccessibilityService() {
     }
     registerReceiver(screenStateReceiver, filter)
 
-    cloverService.start(this)
+    TrialProvider.getProvider(this).provide { state ->
+      if (state.expired) {
+        disableSelf()
+      } else {
+        cloverService.start(this)
+      }
+    }
   }
 
   private enum class Orientation { PORTRAIT, LANDSCAPE }
@@ -95,8 +101,14 @@ class OverlayService : AccessibilityService() {
 
   @SuppressLint("InflateParams")
   private fun activateProfile(profile: Profile) {
-    if (overlayView != null) {
+    if (overlayView != null || !cloverService.started) {
       return
+    }
+
+    TrialProvider.getProvider(this).provide { state ->
+      if (state.expired) {
+        disableSelf()
+      }
     }
 
     val (theme, controller, extraButtons) = when (profile) {

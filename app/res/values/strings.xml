@@ -1,5 +1,6 @@
 <resources>
   <string name="app_name">Cloverplay</string>
+  <string name="app_name_trial">[TRIAL] Cloverplay</string>
   <string name="service_set_failure_title">Overlay service</string>
   <string name="service_set_failure_message">Failed to toggle overlay service.</string>
   <string name="ok">OK</string>
@@ -11,6 +12,7 @@
   <string name="menu_licenses">Licenses</string>
   <string name="menu_about">About</string>
   <string name="accessibility_service_label">Cloverplay Overlay Service</string>
+  <string name="accessibility_service_label_trial">[TRIAL] Cloverplay Overlay Service</string>
   <string name="accessibility_service_descr">
         Cloverplay uses the accessibility service to detect when Stadia or xCloud is running and
         display the touch controls overlay.
@@ -24,4 +26,7 @@
   <string name="pref_left_margin">Left margin</string>
   <string name="pref_right_margin">Right margin</string>
   <string name="pref_joystick_radius">Joystick radius</string>
+  <string name="trial_check">Checking trial status...</string>
+  <string name="trial_expired">Sorry, but your trial has expired.</string>
+  <string name="trial_expires_soon">Your trial will expire at: %s</string>
 </resources>

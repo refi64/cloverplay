@@ -1,3 +1,4 @@
+require 'io/console'
 require 'json'
 require 'net/http'
 require 'rexml/document'
@@ -55,15 +56,22 @@ end
 
 task :sign do
   bin = 'bazel-bin/app'
-  unsigned = "#{bin}/cloverplay_unsigned.apk"
-  aligned = "#{bin}/cloverplay_unsigned_aligned.apk"
-  release = "#{bin}/cloverplay_release.apk"
-  ks = 'cloverplay.keystore'
+  password_env = 'SIGN_PASSWORD'
 
-  build_tools = Dir.glob('third_party/android-sdk/build-tools/*').first
+  print 'Key password: '
+  ENV[password_env] = STDIN.noecho(&:gets).chomp
 
-  rm [aligned, release], :force => true
+  ['trial', 'paid'].each do |flavor|
+    unsigned = "#{bin}/cloverplay_#{flavor}_unsigned.apk"
+    aligned = "#{bin}/cloverplay_#{flavor}_unsigned_aligned.apk"
+    release = "#{bin}/cloverplay_#{flavor}_release.apk"
+    ks = 'cloverplay.keystore'
 
-  sh "#{build_tools}/zipalign -v -p 4 #{unsigned} #{aligned}"
-  sh "#{build_tools}/apksigner sign --ks #{ks} --out #{release} #{aligned}"
+    build_tools = Dir.glob('third_party/android-sdk/build-tools/*').first
+
+    rm [aligned, release], :force => true
+
+    sh "#{build_tools}/zipalign -v -p 4 #{unsigned} #{aligned}"
+    sh "#{build_tools}/apksigner sign --ks #{ks} --ks-pass env:#{password_env} --out #{release} #{aligned}"
+  end
 end

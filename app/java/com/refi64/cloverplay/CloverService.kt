@@ -23,6 +23,8 @@ class CloverService {
 
   lateinit var controller: Protos.Controller
 
+  val started get() = process != null
+
   fun start(context: Context) {
     assert(process == null)
 

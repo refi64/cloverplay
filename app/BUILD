@@ -1,12 +1,42 @@
 load("@rules_android//android:rules.bzl", "android_binary")
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_android_library")
-load("//:build/java_build_config.bzl", "java_build_config")
+load("//:build/java_build_config.bzl", "java_build_config", "trial_key")
 load("@build_stack_rules_proto//java:java_proto_compile.bzl", "java_proto_compile")
 
 PACKAGE = "com.refi64.cloverplay"
 
+MODES = [
+    "trial",
+    "long_trial",
+    "paid",
+]
+
+APP_IDS = {
+    "trial": "com.refi64.cloverplay.trial",
+    "long_trial": "com.refi64.cloverplay.ltrial",
+    "paid": "com.refi64.cloverplay",
+}
+
+trial_key(
+    name = "trial_key",
+    build_setting_default = "",
+)
+
+trial_key(
+    name = "long_trial_key",
+    build_setting_default = "",
+)
+
+[java_build_config(
+    name = "%s_build_config" % mode,
+    application_id = APP_IDS[mode],
+    package = PACKAGE,
+    trial_key = ":%s_key" % mode,
+) for mode in MODES if mode.endswith("trial")]
+
 java_build_config(
-    name = "build_config",
+    name = "paid_build_config",
+    application_id = APP_IDS["paid"],
     package = PACKAGE,
 )
 
@@ -15,10 +45,13 @@ java_proto_compile(
     deps = ["//service:proto"],
 )
 
-kt_android_library(
-    name = "lib",
-    srcs = glob(["java/**"]) + [
-        ":build_config",
+[kt_android_library(
+    name = "%s_lib" % mode,
+    srcs = glob(
+        ["java/**"],
+        exclude = ["**/%sTrialProvider.kt" % ("Null" if mode.endswith("trial") else "Trialy")],
+    ) + [
+        ":%s_build_config" % mode,
         ":java_proto",
     ],
     assets = [
@@ -32,6 +65,7 @@ kt_android_library(
     manifest = "AndroidManifest.xml",
     resource_files = glob(["res/**"]),
     deps = [
+        "@com_github_jetbrains_kotlin//:kotlin-reflect",
         "@com_google_protobuf//:protobuf_java",
         "@com_google_protobuf//:protobuf_java_util",
         "@maven//:androidx_appcompat_appcompat",
@@ -43,23 +77,27 @@ kt_android_library(
         "@maven//:com_github_topjohnwu_libsu_core",
         "@maven//:com_google_android_material_material",
         "@maven//:de_psdev_licensesdialog_licensesdialog",
-    ],
-)
+    ] + (["@maven//:io_trialy_library_trialy"] if mode.endswith("trial") else []),
+) for mode in MODES]
 
-android_binary(
-    name = "cloverplay",
+[android_binary(
+    name = "cloverplay_%s" % mode,
     custom_package = PACKAGE,
-    manifest = "AndroidManifest.xml",
+    manifest = "AndroidManifest.trial.xml" if mode.endswith("trial") else "AndroidManifest.xml",
     manifest_values = {
+        "applicationId": APP_IDS[mode],
         "versionCode": "1",
         "versionName": "0.1",
     },
     multidex = "native",
-    # proguard_specs = select({
-    #     "//:release": ["proguard-rules.pro"],
-    #     "//conditions:default": [],
-    # }),
-    resource_files = glob(["res/**"]),
+    proguard_specs = select({
+        # "//:release": [
+        #     "//:third_party/proguard_specs/proguard-android-optimize.txt",
+        #     "proguard/guava-rules.pro",
+        #     "proguard/cloverplay-rules.pro",
+        # ],
+        "//conditions:default": [],
+    }),
     visibility = ["//visibility:public"],
-    deps = [":lib"],
-)
+    deps = [":%s_lib" % mode],
+) for mode in MODES]

@@ -5,6 +5,7 @@ local bazel_compdb_ver = '0.4.3';
 local fmt_ver = '6.2.0';
 local grpc_ver = '1.28.1';
 local magic_enum_ver = '0.6.5';
+local proguard_specs_ver = 'android-10.0.0_r33';
 
 local android_rules_commit = '9ab1134546364c6de84fc6c80b4202fdbebbbb35';
 local cc_rules_commit = '7c3170fe93e13fbd4835bfa4f64ff93cf2c9b6c8';
@@ -75,6 +76,11 @@ local OfficialBazelRulesSnapshot(repo, revision) =
     {
       url: std.format('https://github.com/Neargye/magic_enum/releases/download/v%s/magic_enum.hpp', magic_enum_ver),
       dest: 'third_party/magic_enum/',
+    },
+    {
+      url: std.format('https://android.googlesource.com/platform/sdk/+/%s/files/proguard-android-optimize.txt?format=TEXT', proguard_specs_ver),
+      dest: 'third_party/proguard_specs/raw.txt',
+      post: 'mkdir -p third_party/proguard_specs; base64 -d $BRT_DOWNLOAD > third_party/proguard_specs/proguard-android-optimize.txt',
     },
 
     OfficialBazelRulesSnapshot('rules_android', android_rules_commit),
