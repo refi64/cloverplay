@@ -16,6 +16,7 @@ import de.psdev.licensesdialog.LicensesDialog
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
   companion object {
@@ -135,7 +136,10 @@ class MainActivity : AppCompatActivity() {
         setTitle(R.string.root_failure_title)
         setMessage(R.string.root_failure_message)
         setCancelable(false)
-        setPositiveButton(R.string.root_failure_quit) { _, _ -> finish() }
+        setPositiveButton(R.string.root_failure_quit) { _, _ ->
+          finishAffinity()
+          exitProcess(0)
+        }
 
         show()
       }
