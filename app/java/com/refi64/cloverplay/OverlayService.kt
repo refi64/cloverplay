@@ -71,6 +71,8 @@ class OverlayService : AccessibilityService() {
   override fun onServiceConnected() {
     super.onServiceConnected()
 
+    PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+
     val filter = IntentFilter().apply {
       addAction(Intent.ACTION_SCREEN_ON)
       addAction(Intent.ACTION_SCREEN_OFF)
