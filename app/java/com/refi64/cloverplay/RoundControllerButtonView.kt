@@ -33,6 +33,12 @@ class RoundControllerButtonView(context: Context, attrs: AttributeSet) :
     inflater.inflate(R.layout.round_controller_button_view, this)
   }
 
+  var customSize: Int
+    get() = findViewById<FloatingActionButton>(R.id.button).customSize
+    set(value) {
+      findViewById<FloatingActionButton>(R.id.button).customSize = value
+    }
+
   @SuppressLint("ClickableViewAccessibility")
   override fun setOnTouchListener(l: OnTouchListener?) {
     findViewById<FloatingActionButton>(R.id.button).setOnTouchListener(l)

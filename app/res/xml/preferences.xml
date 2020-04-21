@@ -19,4 +19,16 @@
       android:max="128"
       android:title="@string/pref_joystick_radius"
       app:showSeekBarValue="true" />
+  <SeekBarPreference
+      android:defaultValue="52"
+      android:key="abxy_spacing"
+      android:max="96"
+      android:title="Spacing between ABXY"
+      app:showSeekBarValue="true"/>
+  <SeekBarPreference
+      android:defaultValue="64"
+      android:key="round_size"
+      android:max="112"
+      android:title="Round button (ABXY, L3, R3) size"
+      app:showSeekBarValue="true" />
 </androidx.preference.PreferenceScreen>

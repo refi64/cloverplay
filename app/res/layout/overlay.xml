@@ -13,12 +13,15 @@
       android:layout_height="match_parent"
       android:alpha="@dimen/overlay_alpha" />
 
+  <!-- All these need extra margins below to account for rotation being used for different
+       buttons-->
+
   <com.refi64.cloverplay.SmallRectControllerButtonView
       android:id="@+id/button_down"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="80dp"
-      android:layout_marginBottom="28dp"
+      android:layout_marginBottom="40dp"
       android:rotation="90"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +33,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="80dp"
-      android:layout_marginBottom="132dp"
+      android:layout_marginBottom="144dp"
       android:rotation="-90"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +45,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="28dp"
-      android:layout_marginBottom="80dp"
+      android:layout_marginBottom="92dp"
       android:rotation="-180"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +57,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="132dp"
-      android:layout_marginBottom="80dp"
+      android:layout_marginBottom="92dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:r_icon="@drawable/ic_keyboard_arrow_right_black_24dp"
@@ -183,10 +186,10 @@
       android:id="@+id/button_a"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginEnd="80dp"
+      android:layout_marginEnd="48dp"
       android:layout_marginBottom="28dp"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintEnd_toEndOf="@id/button_b"
       app:letter="A" />
 
   <com.refi64.cloverplay.RoundControllerButtonView
@@ -194,8 +197,8 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginEnd="28dp"
-      android:layout_marginBottom="80dp"
-      app:layout_constraintBottom_toBottomOf="parent"
+      android:layout_marginBottom="48dp"
+      app:layout_constraintBottom_toBottomOf="@id/button_a"
       app:layout_constraintEnd_toEndOf="parent"
       app:letter="B" />
 
@@ -203,20 +206,20 @@
       android:id="@+id/button_x"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginEnd="132dp"
-      android:layout_marginBottom="80dp"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
+      android:layout_marginEnd="48dp"
+      android:layout_marginBottom="48dp"
+      app:layout_constraintBottom_toBottomOf="@id/button_a"
+      app:layout_constraintEnd_toEndOf="@id/button_a"
       app:letter="X" />
 
   <com.refi64.cloverplay.RoundControllerButtonView
       android:id="@+id/button_y"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginEnd="80dp"
-      android:layout_marginBottom="132dp"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
+      android:layout_marginEnd="48dp"
+      android:layout_marginBottom="48dp"
+      app:layout_constraintBottom_toBottomOf="@id/button_b"
+      app:layout_constraintEnd_toEndOf="@id/button_b"
       app:letter="Y" />
 
   <com.refi64.cloverplay.RoundControllerButtonView
@@ -224,8 +227,8 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginEnd="28dp"
-      android:layout_marginBottom="184dp"
-      app:layout_constraintBottom_toBottomOf="parent"
+      android:layout_marginBottom="48dp"
+      app:layout_constraintBottom_toBottomOf="@id/button_y"
       app:layout_constraintEnd_toEndOf="parent"
       app:letter="R3" />
 
@@ -233,9 +236,9 @@
       android:id="@+id/button_l3"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_marginBottom="48dp"
       android:layout_marginStart="28dp"
-      android:layout_marginBottom="184dp"
-      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintBottom_toBottomOf="@id/button_y"
       app:layout_constraintStart_toStartOf="parent"
       app:letter="L3" />
 

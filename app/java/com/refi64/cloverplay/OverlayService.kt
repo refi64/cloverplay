@@ -21,6 +21,13 @@ class OverlayService : AccessibilityService() {
 
   private enum class Profile { Stadia, Xcloud }
 
+  private val largeRoundButtons = listOf(R.id.button_a,
+      R.id.button_b,
+      R.id.button_x,
+      R.id.button_y,
+      R.id.button_l3,
+      R.id.button_r3)
+
   private val leftButtons = listOf(R.id.button_left,
       R.id.button_right,
       R.id.button_up,
@@ -96,7 +103,7 @@ class OverlayService : AccessibilityService() {
     }
   }
 
-  private fun getScaledMargins(key: String): Int =
+  private fun getScaledSize(key: String): Int =
       (preferences.getInt(key, 0) * resources.displayMetrics.density).toInt()
 
   @SuppressLint("InflateParams")
@@ -185,13 +192,29 @@ class OverlayService : AccessibilityService() {
 
     for (id in leftButtons) {
       view.findViewById<View>(id).updateLayoutParams<ConstraintLayout.LayoutParams> {
-        leftMargin += getScaledMargins("left_margin")
+        leftMargin += getScaledSize("left_margin")
       }
     }
 
     for (id in rightButtons) {
       view.findViewById<View>(id).updateLayoutParams<ConstraintLayout.LayoutParams> {
-        rightMargin += getScaledMargins("right_margin")
+        rightMargin += getScaledSize("right_margin")
+      }
+    }
+
+    for (id in largeRoundButtons) {
+      view.findViewById<RoundControllerButtonView>(id).apply {
+        customSize = getScaledSize("round_size")
+
+        updateLayoutParams<ConstraintLayout.LayoutParams> {
+          if (id != R.id.button_a) {
+            bottomMargin = getScaledSize("abxy_spacing")
+          }
+
+          if (id != R.id.button_b && id != R.id.button_l3 && id != R.id.button_r3) {
+            rightMargin = getScaledSize("abxy_spacing")
+          }
+        }
       }
     }
 
