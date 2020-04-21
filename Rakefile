@@ -61,11 +61,13 @@ task :sign do
   print 'Key password: '
   ENV[password_env] = STDIN.noecho(&:gets).chomp
 
-  ['trial', 'paid'].each do |flavor|
+  ['trial', 'long_trial', 'paid'].each do |flavor|
     unsigned = "#{bin}/cloverplay_#{flavor}_unsigned.apk"
     aligned = "#{bin}/cloverplay_#{flavor}_unsigned_aligned.apk"
     release = "#{bin}/cloverplay_#{flavor}_release.apk"
     ks = 'cloverplay.keystore'
+
+    next if !File.exist?(unsigned)
 
     build_tools = Dir.glob('third_party/android-sdk/build-tools/*').first
 
