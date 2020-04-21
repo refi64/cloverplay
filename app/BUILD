@@ -86,8 +86,8 @@ java_proto_compile(
     manifest = "AndroidManifest.trial.xml" if mode.endswith("trial") else "AndroidManifest.xml",
     manifest_values = {
         "applicationId": APP_IDS[mode],
-        "versionCode": "1",
-        "versionName": "0.1",
+        "versionCode": "2",
+        "versionName": "0.2",
     },
     multidex = "native",
     proguard_specs = select({
