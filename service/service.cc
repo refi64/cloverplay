@@ -1,41 +1,23 @@
 #include "service.h"
 
-#include "google/protobuf/util/json_util.h"
-#include "service/service.pb.h"
+#include <rapidjson/ostreamwrapper.h>
+#include <rapidjson/writer.h>
+
 #include <memory>
 #include <string>
 #include <string_view>
 
-namespace {
-
-absl::Status ProtoStatusToAbseil(std::string_view prefix,
-                                 google::protobuf::util::Status proto_status) {
-  if (proto_status.ok()) {
-    return absl::OkStatus();
-  }
-
-  std::string error(prefix);
-  proto_status.message().AppendToString(&error);
-  return absl::Status(static_cast<absl::StatusCode>(proto_status.code()), error);
-}
-
-}  // namespace
-
-Service::~Service() { delete stadia_.connection(); }
-
 // static
 StatusOr<Service> Service::Create() {
-  auto stadia_uinput =
-      std::make_unique<UinputConnection>(TRY_STATUS_OR(UinputConnection::Connect()));
-  auto xbox_uinput = std::make_unique<UinputConnection>(TRY_STATUS_OR(UinputConnection::Connect()));
+  std::vector<UinputConnection> connections;
 
-  StadiaGamepad stadia = TRY_STATUS_OR(StadiaGamepad::Create(stadia_uinput.get()));
-  stadia_uinput.release();
+  connections.push_back(TRY_STATUS_OR(UinputConnection::Connect()));
+  connections.push_back(TRY_STATUS_OR(UinputConnection::Connect()));
 
-  Xbox360Gamepad xbox = TRY_STATUS_OR(Xbox360Gamepad::Create(xbox_uinput.get()));
-  xbox_uinput.release();
+  StadiaGamepad stadia = TRY_STATUS_OR(StadiaGamepad::Create(&connections[0]));
+  Xbox360Gamepad xbox = TRY_STATUS_OR(Xbox360Gamepad::Create(&connections[1]));
 
-  return Service(std::move(stadia), std::move(xbox));
+  return Service(std::move(connections), std::move(stadia), std::move(xbox));
 }
 
 absl::Status Service::Run() {
@@ -50,50 +32,49 @@ absl::Status Service::Run() {
       return absl::OkStatus();
     }
 
-    proto::Reply reply;
+    rapidjson::Document reply;
+    reply.SetObject();
+
     if (absl::Status status = HandleRequest(req_json); !status.ok()) {
-      reply.set_error(status.ToString());
+      reply.AddMember("error", status.ToString(), reply.GetAllocator());
     }
 
-    std::string reply_json;
-    TRY_STATUS(
-        ProtoStatusToAbseil("Failed to encode JSON reply",
-                            google::protobuf::util::MessageToJsonString(reply, &reply_json)));
+    rapidjson::OStreamWrapper osw(std::cout);
+    rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
+    reply.Accept(writer);
 
-    std::cout << reply_json << std::endl;
+    std::cout << std::endl;
   }
 }
 
 absl::Status Service::HandleRequest(std::string_view req_json) {
-  proto::Request req;
-  TRY_STATUS(
-      ProtoStatusToAbseil("Failed to parse JSON message",
-                          google::protobuf::util::JsonStringToMessage(req_json.data(), &req)));
+  rapidjson::Document req_doc = TRY_STATUS_OR(ParseJsonDocument(req_json));
+  Request req = TRY_STATUS_OR(Request::FromJson(JsonContext::Root(req_doc)));
 
   Gamepad* gamepad = nullptr;
   switch (req.controller()) {
-  case proto::Controller::STADIA:
+  case Request::Controller::kStadia:
     gamepad = &stadia_;
     break;
-  case proto::Controller::XBOX360:
+  case Request::Controller::kXbox:
     gamepad = &xbox_;
     break;
   default:
     return absl::Status(absl::StatusCode::kInvalidArgument, "Invalid controller value");
   }
 
-  for (const proto::Event& event : req.events()) {
-    switch (event.event_case()) {
-    case proto::Event::EventCase::kButton:
+  for (const Event& event : req.events()) {
+    switch (event.type()) {
+    case Event::Type::kButton:
       TRY_STATUS(HandleButtonEvent(gamepad, event.button()));
       break;
-    case proto::Event::EventCase::kJoystick:
+    case Event::Type::kJoystick:
       TRY_STATUS(HandleJoystickEvent(gamepad, event.joystick()));
       break;
-    case proto::Event::EventCase::kTrigger:
+    case Event::Type::kTrigger:
       TRY_STATUS(HandleTriggerEvent(gamepad, event.trigger()));
       break;
-    case proto::Event::EventCase::kDpad:
+    case Event::Type::kDpad:
       TRY_STATUS(HandleDpadEvent(gamepad, event.dpad()));
       break;
     default:
@@ -104,22 +85,18 @@ absl::Status Service::HandleRequest(std::string_view req_json) {
   return gamepad->ReportEvents();
 }
 
-absl::Status Service::HandleButtonEvent(Gamepad* gamepad, const proto::ButtonEvent& event) {
-  return gamepad->QueueButtonState(static_cast<Gamepad::Button>(event.button()), event.pressed());
+absl::Status Service::HandleButtonEvent(Gamepad* gamepad, const Event::Button& event) {
+  return gamepad->QueueButtonState(event.button, event.pressed);
 }
 
-absl::Status Service::HandleJoystickEvent(Gamepad* gamepad, const proto::JoystickEvent& event) {
-  return gamepad->QueueJoystickState(static_cast<Gamepad::Joystick>(event.joystick()),
-                                     static_cast<Gamepad::JoystickAxis>(event.axis()),
-                                     event.position());
+absl::Status Service::HandleJoystickEvent(Gamepad* gamepad, const Event::Joystick& event) {
+  return gamepad->QueueJoystickState(event.joystick, event.axis, event.position);
 }
 
-absl::Status Service::HandleTriggerEvent(Gamepad* gamepad, const proto::TriggerEvent& event) {
-  return gamepad->QueueTriggerState(static_cast<Gamepad::Trigger>(event.trigger()),
-                                    event.position());
+absl::Status Service::HandleTriggerEvent(Gamepad* gamepad, const Event::Trigger& event) {
+  return gamepad->QueueTriggerState(event.trigger, event.position);
 }
 
-absl::Status Service::HandleDpadEvent(Gamepad* gamepad, const proto::DpadEvent& event) {
-  return gamepad->QueueDpadState(static_cast<Gamepad::DpadDirection>(event.direction()),
-                                 event.pressed());
+absl::Status Service::HandleDpadEvent(Gamepad* gamepad, const Event::Dpad& event) {
+  return gamepad->QueueDpadState(event.direction, event.pressed);
 }

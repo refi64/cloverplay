@@ -122,15 +122,15 @@ class OverlayService : AccessibilityService() {
 
     val (theme, controller, extraButtons) = when (profile) {
       Profile.Stadia -> Triple(R.style.StadiaOverlayTheme,
-          Protos.Controller.STADIA,
-          arrayOf(R.id.button_more to Protos.Button.BUTTON_SELECT,
-              R.id.button_menu to Protos.Button.BUTTON_START,
-              R.id.button_assistant to Protos.Button.BUTTON_STADIA_ASSISTANT,
-              R.id.button_screenshot to Protos.Button.BUTTON_STADIA_SCREENSHOT))
+          CloverService.Controller.STADIA,
+          arrayOf(R.id.button_more to CloverService.Button.SELECT,
+              R.id.button_menu to CloverService.Button.START,
+              R.id.button_assistant to CloverService.Button.STADIA_ASSISTANT,
+              R.id.button_screenshot to CloverService.Button.STADIA_SCREENSHOT))
       Profile.Xcloud -> Triple(R.style.XcloudOverlayTheme,
-          Protos.Controller.XBOX360,
-          arrayOf(R.id.button_view to Protos.Button.BUTTON_SELECT,
-              R.id.button_xmenu to Protos.Button.BUTTON_START))
+          CloverService.Controller.XBOX,
+          arrayOf(R.id.button_view to CloverService.Button.SELECT,
+              R.id.button_xmenu to CloverService.Button.START))
     }
 
     cloverService.controller = controller
@@ -164,28 +164,28 @@ class OverlayService : AccessibilityService() {
 
     attachMappedTouchListeners(view,
         cloverService::createButtonTouchListener,
-        R.id.button_a to Protos.Button.BUTTON_A,
-        R.id.button_b to Protos.Button.BUTTON_B,
-        R.id.button_x to Protos.Button.BUTTON_X,
-        R.id.button_y to Protos.Button.BUTTON_Y,
-        R.id.button_l1 to Protos.Button.BUTTON_L1,
-        R.id.button_l3 to Protos.Button.BUTTON_L3,
-        R.id.button_r1 to Protos.Button.BUTTON_R1,
-        R.id.button_r3 to Protos.Button.BUTTON_R3,
-        R.id.button_home to Protos.Button.BUTTON_HOME,
+        R.id.button_a to CloverService.Button.A,
+        R.id.button_b to CloverService.Button.B,
+        R.id.button_x to CloverService.Button.X,
+        R.id.button_y to CloverService.Button.Y,
+        R.id.button_l1 to CloverService.Button.L1,
+        R.id.button_l3 to CloverService.Button.L3,
+        R.id.button_r1 to CloverService.Button.R1,
+        R.id.button_r3 to CloverService.Button.R3,
+        R.id.button_home to CloverService.Button.HOME,
         *extraButtons)
 
     attachMappedTouchListeners(view,
         cloverService::createDpadTouchListener,
-        R.id.button_up to Protos.DpadDirection.DPAD_NORTH,
-        R.id.button_down to Protos.DpadDirection.DPAD_SOUTH,
-        R.id.button_right to Protos.DpadDirection.DPAD_EAST,
-        R.id.button_left to Protos.DpadDirection.DPAD_WEST)
+        R.id.button_up to CloverService.DpadDirection.NORTH,
+        R.id.button_down to CloverService.DpadDirection.SOUTH,
+        R.id.button_right to CloverService.DpadDirection.EAST,
+        R.id.button_left to CloverService.DpadDirection.WEST)
 
     attachMappedTouchListeners(view,
         cloverService::createTriggerTouchListener,
-        R.id.button_l2 to Protos.Trigger.TRIGGER_LEFT,
-        R.id.button_r2 to Protos.Trigger.TRIGGER_RIGHT)
+        R.id.button_l2 to CloverService.Trigger.LEFT,
+        R.id.button_r2 to CloverService.Trigger.RIGHT)
 
     view.findViewById<JoystickCanvasView>(R.id.joystick_view).apply {
       joystickEventListener = cloverService.createJoystickEventListener()

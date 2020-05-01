@@ -5,23 +5,86 @@ import android.graphics.PointF
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import com.google.protobuf.util.JsonFormat
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+import kotlinx.serialization.modules.SerializersModule
 
 class CloverService {
+  enum class Controller { STADIA, XBOX }
+
+  enum class Button {
+    A, B, X, Y, L1, L3, R1, R3, HOME, SELECT, START, STADIA_ASSISTANT, STADIA_SCREENSHOT
+  }
+
+  enum class DpadDirection {
+    NORTH, SOUTH, EAST, WEST
+  }
+
+  enum class Trigger {
+    LEFT, RIGHT
+  }
+
+  enum class Joystick { LEFT, RIGHT }
+
+  enum class JoystickAxis { X, Y }
+
+//  @Serializable
+//  sealed class Event {
+//    @Serializable
+//    @SerialName("button")
+//    data class ButtonEvent(val button: Button, val pressed: Boolean) : Event()
+//
+//    @Serializable
+//    @SerialName("joystick")
+//    data class JoystickEvent(val joystick: Joystick, val axis: JoystickAxis, val position: Double) :
+//        Event()
+//
+//    @Serializable
+//    @SerialName("trigger")
+//    data class TriggerEvent(val trigger: Trigger, val position: Double) : Event()
+//
+//    @Serializable
+//    @SerialName("dpad")
+//    data class DpadEvent(val direction: DpadDirection, val pressed: Boolean) : Event()
+//  }
+
+  interface Event
+  @Serializable
+  @SerialName("button")
+  data class ButtonEvent(val button: Button, val pressed: Boolean) : Event
+    @Serializable
+    @SerialName("joystick")
+    data class JoystickEvent(val joystick: Joystick, val axis: JoystickAxis, val position: Double) :
+        Event
+
+    @Serializable
+    @SerialName("trigger")
+    data class TriggerEvent(val trigger: Trigger, val position: Double) : Event
+
+    @Serializable
+    @SerialName("dpad")
+    data class DpadEvent(val direction: DpadDirection, val pressed: Boolean) : Event
+//  }
+
+  @Serializable
+  data class Request(val controller: Controller, val events: List<Event>)
+
+  @Serializable
+  data class Reply(val error: String = "")
+
   private var process: Process? = null
   private var processStdin: BufferedWriter? = null
   private var processStdout: BufferedReader? = null
 
   private var tag = "CloverService"
 
-  lateinit var controller: Protos.Controller
+  lateinit var controller: Controller
 
   val started get() = process != null
 
@@ -45,72 +108,47 @@ class CloverService {
     }
   }
 
-  private fun sendRequest(event: Protos.Event) {
-    val request = Protos.Request.newBuilder().let { builder ->
-      builder.controller = controller
-      builder.addEvents(event)
-    }.build()
+  private fun sendEvent(event: Event) {
+    val module = SerializersModule {
+      polymorphic(Event::class) {
+        ButtonEvent::class with ButtonEvent.serializer()
+        JoystickEvent::class with JoystickEvent.serializer()
+        TriggerEvent::class with TriggerEvent.serializer()
+        DpadEvent::class with DpadEvent.serializer()
+      }
+    }
 
-    val json = JsonFormat.printer().omittingInsignificantWhitespace().print(request)
-    Log.v(tag, "Generated JSON message: $json")
+    val json = Json(JsonConfiguration.Stable, context = module)
 
+    val request = Request(controller, listOf(event))
+    val requestJson = json.stringify(Request.serializer(), request)
+
+    Log.v(tag, "Generated JSON message: $requestJson")
     processStdin!!.apply {
-      appendln(json)
+      appendln(requestJson)
       flush()
     }
 
     val replyJson = processStdout!!.readLine()
     Log.v(tag, "JSON response: $replyJson")
 
-    val replyBuilder = Protos.Reply.newBuilder()
-    JsonFormat.parser().merge(replyJson, replyBuilder)
-
-    val reply = replyBuilder.build()
+    val reply = json.parse(Reply.serializer(), replyJson)
     if (reply.error.isNotEmpty()) {
       Log.e(tag, "Server returned: ${reply.error}")
     }
   }
 
-  private fun buildAndSendEvent(build: Protos.Event.Builder.() -> Unit) {
-    sendRequest(Protos.Event.newBuilder().apply(build).build())
-  }
+  private fun sendButton(button: Button, pressed: Boolean) =
+      sendEvent(ButtonEvent(button, pressed))
 
-  private fun sendButton(button: Protos.Button, pressed: Boolean) {
-    buildAndSendEvent {
-      buttonBuilder.let {
-        it.button = button
-        it.pressed = pressed
-      }
-    }
-  }
+  private fun sendDpad(direction: DpadDirection, pressed: Boolean) =
+      sendEvent(DpadEvent(direction, pressed))
 
-  private fun sendDpad(direction: Protos.DpadDirection, pressed: Boolean) {
-    buildAndSendEvent {
-      dpadBuilder.let {
-        it.direction = direction
-        it.pressed = pressed
-      }
-    }
-  }
+  private fun sendTrigger(trigger: Trigger, position: Double) =
+      sendEvent(TriggerEvent(trigger, position))
 
-  private fun sendTrigger(trigger: Protos.Trigger, position: Double) {
-    buildAndSendEvent {
-      triggerBuilder.let {
-        it.trigger = trigger
-        it.position = position
-      }
-    }
-  }
-
-  private fun sendJoystick(joystick: Protos.Joystick, axis: Protos.JoystickAxis, position: Double) {
-    buildAndSendEvent {
-      joystickBuilder.let {
-        it.joystick = joystick
-        it.axis = axis
-        it.position = position
-      }
-    }
-  }
+  private fun sendJoystick(joystick: Joystick, axis: JoystickAxis, position: Double) =
+      sendEvent(JoystickEvent(joystick, axis, position))
 
   private fun createPressableTouchListener(
       handler: (pressed: Boolean) -> Unit): View.OnTouchListener {
@@ -124,15 +162,15 @@ class CloverService {
     }
   }
 
-  fun createButtonTouchListener(button: Protos.Button): View.OnTouchListener {
+  fun createButtonTouchListener(button: Button): View.OnTouchListener {
     return createPressableTouchListener { pressed -> sendButton(button, pressed) }
   }
 
-  fun createDpadTouchListener(direction: Protos.DpadDirection): View.OnTouchListener {
+  fun createDpadTouchListener(direction: DpadDirection): View.OnTouchListener {
     return createPressableTouchListener { pressed -> sendDpad(direction, pressed) }
   }
 
-  fun createTriggerTouchListener(trigger: Protos.Trigger): View.OnTouchListener {
+  fun createTriggerTouchListener(trigger: Trigger): View.OnTouchListener {
     return createPressableTouchListener { pressed ->
       sendTrigger(trigger, if (pressed) 1.0 else 0.0)
     }
@@ -141,17 +179,17 @@ class CloverService {
   fun createJoystickEventListener(): OnJoystickEventListener {
     return { event ->
       val joystick = when (event.joystick.side) {
-        Joystick.Side.LEFT -> Protos.Joystick.JOYSTICK_LEFT
-        Joystick.Side.RIGHT -> Protos.Joystick.JOYSTICK_RIGHT
+        com.refi64.cloverplay.Joystick.Side.LEFT -> Joystick.LEFT
+        com.refi64.cloverplay.Joystick.Side.RIGHT -> Joystick.RIGHT
       }
 
       val position = when (event.state) {
-        JoystickEvent.State.ACTIVE -> event.joystick.relativePosition.scaled(1 / event.joystick.radius)
-        JoystickEvent.State.RELEASED -> PointF(0.0f, 0.0f)
+        com.refi64.cloverplay.JoystickEvent.State.ACTIVE -> event.joystick.relativePosition.scaled(1 / event.joystick.radius)
+        com.refi64.cloverplay.JoystickEvent.State.RELEASED -> PointF(0.0f, 0.0f)
       }
 
-      sendJoystick(joystick, Protos.JoystickAxis.AXIS_X, position.x.toDouble())
-      sendJoystick(joystick, Protos.JoystickAxis.AXIS_Y, position.y.toDouble())
+      sendJoystick(joystick, JoystickAxis.X, position.x.toDouble())
+      sendJoystick(joystick, JoystickAxis.Y, position.y.toDouble())
     }
   }
 

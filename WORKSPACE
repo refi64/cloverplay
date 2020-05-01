@@ -31,6 +31,12 @@ new_local_repository(
     path = "third_party/magic_enum",
 )
 
+new_local_repository(
+    name = "rapidjson",
+    build_file = "build/BUILD.rapidjson",
+    path = "third_party/rapidjson",
+)
+
 local_repository(
     name = "rules_android",
     path = "third_party/rules_android",
@@ -56,28 +62,16 @@ local_repository(
     path = "third_party/rules_pkg",
 )
 
-local_repository(
-    name = "rules_proto",
-    path = "third_party/rules_proto",
-)
-
-local_repository(
-    name = "build_stack_rules_proto",
-    path = "third_party/stackb_rules_proto",
-)
-
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
     artifacts = [
-        "androidx.appcompat:appcompat:1.0.2",
+        "androidx.appcompat:appcompat:1.1.0",
         "androidx.constraintlayout:constraintlayout:1.1.3",
-        "androidx.core:core-ktx:1.0.2",
-        "androidx.multidex:multidex:2.0.1",
+        "androidx.core:core-ktx:1.2.0",
         "androidx.preference:preference:1.1.0",
         "com.github.topjohnwu.libsu:core:2.5.1",
         "com.google.android.material:material:1.1.0",
-        "com.google.code.gson:gson:2.8.6",
         "de.psdev.licensesdialog:licensesdialog:2.1.0",
         "io.trialy.library:trialy:1.0.9",
     ],
@@ -90,6 +84,10 @@ maven_install(
     ],
 )
 
+load("@io_bazel_rules_kotlin//kotlin:dependencies.bzl", "kt_download_local_dev_dependencies")
+
+kt_download_local_dev_dependencies()
+
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kotlin_repositories", "kt_register_toolchains")
 
 kotlin_repositories()
@@ -99,28 +97,3 @@ kt_register_toolchains()
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 
 rules_pkg_dependencies()
-
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
-
-rules_proto_dependencies()
-
-rules_proto_toolchains()
-
-load("@build_stack_rules_proto//java:deps.bzl", "com_google_errorprone_error_prone_annotations")
-load("@build_stack_rules_proto//android:deps.bzl", "android_proto_compile", "com_google_guava_guava_android")
-
-android_proto_compile()
-
-com_google_errorprone_error_prone_annotations()
-
-com_google_guava_guava_android()
-
-bind(
-    name = "gson",
-    actual = "@maven//:com_google_code_gson_gson",
-)
-
-bind(
-    name = "guava",
-    actual = "@com_google_guava_guava_android",
-)

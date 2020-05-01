@@ -10,12 +10,7 @@ import java.time.temporal.ChronoUnit
 
 const val TRIAL_ORIGIN = "trial_origin"
 
-@Suppress("unused")
 class TrialyTrialProvider(private val context: Context) : TrialProvider() {
-  companion object : TrialProvider.Factory() {
-    override fun getProvider(context: Context): TrialProvider = TrialyTrialProvider(context)
-  }
-
   private val trialy = Trialy(context, BuildConfig.TRIAL_KEY)
 
   override fun provide(callback: (valid: State) -> Unit) {

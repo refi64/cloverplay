@@ -4,5 +4,6 @@ AlignEscapedNewlines: Left
 ColumnLimit: 100
 FixNamespaceComments: true
 NamespaceIndentation: Inner
+PenaltyBreakAssignment: 100
 PointerAlignment: Left
 SpacesBeforeTrailingComments: 2

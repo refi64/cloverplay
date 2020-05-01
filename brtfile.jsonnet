@@ -3,17 +3,15 @@ local android_sdk_components = import 'android_sdk_components.json';
 local bazel_ver = '3.0.0';
 local bazel_compdb_ver = '0.4.3';
 local fmt_ver = '6.2.0';
-local grpc_ver = '1.28.1';
 local magic_enum_ver = '0.6.5';
 local proguard_specs_ver = 'android-10.0.0_r33';
+local rapidjson_ver = '8f4c021fa2f1e001d2376095928fc0532adf2ae6';
 
 local android_rules_commit = '9ab1134546364c6de84fc6c80b4202fdbebbbb35';
 local cc_rules_commit = '7c3170fe93e13fbd4835bfa4f64ff93cf2c9b6c8';
 local jvm_rules_commit = 'bad9e2501279aea5268b1b8a5463ccc1be8ddf65';
-local kotlin_rules_commit = '5efac99b66d48992cded75646e0b00778cb8b38d';
+local kotlin_rules_commit = '4a1213e7770ec2d1a1c0e5ba87c3d5452507bbab';
 local pkg_rules_commit = '79eafadca7b4fdb675b1cfa40b2ac20f23139271';
-local proto_rules_commit = '8b81c3ccfdd0e915e46ffa888d3cdb6116db6fa5';
-local stackb_proto_rules_commit = '1d6b84118399828511faeecc145d399c1e7bdee2';
 
 local AndroidSdkComponentUrl(name) =
   std.format('https://dl.google.com/android/repository/%s', android_sdk_components[name].filename);
@@ -78,6 +76,11 @@ local OfficialBazelRulesSnapshot(repo, revision) =
       dest: 'third_party/magic_enum/',
     },
     {
+      url: std.format('https://github.com/Tencent/rapidjson/archive/%s.tar.gz', rapidjson_ver),
+      dest: 'third_party/rapidjson',
+      arc: { prefix: std.format('rapidjson-%s', rapidjson_ver) },
+    },
+    {
       url: std.format('https://android.googlesource.com/platform/sdk/+/%s/files/proguard-android-optimize.txt?format=TEXT', proguard_specs_ver),
       dest: 'third_party/proguard_specs/raw.txt',
       post: 'mkdir -p third_party/proguard_specs; base64 -d $BRT_DOWNLOAD > third_party/proguard_specs/proguard-android-optimize.txt',
@@ -90,7 +93,5 @@ local OfficialBazelRulesSnapshot(repo, revision) =
     OfficialBazelRulesSnapshot('rules_pkg', pkg_rules_commit) + {
       arc+: { prefix: super.prefix + '/pkg' },
     },
-    OfficialBazelRulesSnapshot('rules_proto', proto_rules_commit),
-    BazelRulesSnapshot('stackb', 'rules_proto', stackb_proto_rules_commit, 'stackb_rules_proto'),
   ],
 }

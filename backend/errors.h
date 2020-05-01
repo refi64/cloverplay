@@ -4,6 +4,7 @@
 #include "fmt/format.h"
 #include "fmt/ostream.h"
 #include <cassert>
+#include <functional>
 #include <new>
 
 absl::Status StatusFromErrno(int ec, std::string_view message);
@@ -35,6 +36,8 @@ void CheckStatus(const absl::Status& status);
 template <typename T>
 class StatusOr {
  public:
+  using ValueType = T;
+
   StatusOr(T value) : status_(absl::OkStatus()) { new (&value_) T(std::move(value)); }
   StatusOr(absl::Status status) : status_(status) { assert(!status.ok()); }
   StatusOr(const StatusOr& other) = delete;
@@ -68,6 +71,12 @@ class StatusOr {
     absl::Status temp(absl::StatusCode::kUnknown, "");
     std::swap(temp, status_);
     return temp;
+  }
+
+  template <typename F>
+  StatusOr<typename std::invoke_result_t<F, const T&>::ValueType> Bind(F func) {
+    return ok() ? std::invoke(func, value())
+                : StatusOr<typename std::invoke_result_t<F, const T&>::ValueType>(status_);
   }
 
  private:
