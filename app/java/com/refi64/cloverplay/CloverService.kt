@@ -5,6 +5,8 @@ import android.graphics.PointF
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import io.sentry.core.Sentry
+import io.sentry.core.SentryEvent
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.nio.file.Files
@@ -135,6 +137,9 @@ class CloverService {
     val reply = json.parse(Reply.serializer(), replyJson)
     if (reply.error.isNotEmpty()) {
       Log.e(tag, "Server returned: ${reply.error}")
+      Sentry.captureEvent(SentryEvent().apply {
+        setTag("server-error", reply.error)
+      })
     }
   }
 

@@ -7,7 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_long_trial.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_long_trial.iml" />
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid.iml" />
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_trial.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_trial.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.trial_lib_base.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.trial_lib_base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.paid_lib_base.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.paid_lib_base.iml" />
     </modules>
   </component>
 </project>

@@ -70,6 +70,8 @@ kt_compiler_plugin(
         "@maven//:com_github_topjohnwu_libsu_core",
         "@maven//:com_google_android_material_material",
         "@maven//:de_psdev_licensesdialog_licensesdialog",
+        "@maven//:io_sentry_sentry_android",
+        "@maven//:io_sentry_sentry_core",
         "@maven//:io_trialy_library_trialy",
     ],
 ) for mode in MODES]

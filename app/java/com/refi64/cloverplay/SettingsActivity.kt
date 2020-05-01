@@ -1,16 +1,13 @@
 package com.refi64.cloverplay
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 
 class SettingsActivity : AppCompatActivity() {
-  companion object {
-    class SettingsFragment : PreferenceFragmentCompat() {
-      override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey)
-      }
+  class SettingsFragment : PreferenceFragmentCompat() {
+    override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
+      setPreferencesFromResource(R.xml.preferences, rootKey)
     }
   }
 

@@ -73,6 +73,8 @@ maven_install(
         "com.github.topjohnwu.libsu:core:2.5.1",
         "com.google.android.material:material:1.1.0",
         "de.psdev.licensesdialog:licensesdialog:2.1.0",
+        "io.sentry:sentry-android:2.0.0",
+        "io.sentry:sentry-core:2.0.0",
         "io.trialy.library:trialy:1.0.9",
     ],
     generate_compat_repositories = True,
