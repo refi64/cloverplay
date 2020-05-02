@@ -63,17 +63,27 @@ task :sign do
 
   ['trial', 'long_trial', 'paid'].each do |flavor|
     unsigned = "#{bin}/cloverplay_#{flavor}_unsigned.apk"
+    unsigned_sentry = "#{bin}/cloverplay_#{flavor}_unsigned_sentry.apk"
     aligned = "#{bin}/cloverplay_#{flavor}_unsigned_aligned.apk"
     release = "#{bin}/cloverplay_#{flavor}_release.apk"
+    map = "#{bin}/cloverplay_#{flavor}_proguard.map"
+    manifest = "#{bin}/_merged/cloverplay_#{flavor}/AndroidManifest.xml"
+    sentry_props = "assets/sentry-debug-meta.properties"
     ks = 'cloverplay.keystore'
 
     next if !File.exist?(unsigned)
 
     build_tools = Dir.glob('third_party/android-sdk/build-tools/*').first
 
-    rm [aligned, release], :force => true
+    rm [unsigned_sentry, aligned, release], :force => true
 
-    sh "#{build_tools}/zipalign -v -p 4 #{unsigned} #{aligned}"
+    sh "sentry-cli upload-proguard --android-manifest #{manifest} --write-properties #{sentry_props} #{map}"
+    cp unsigned, unsigned_sentry
+    chmod 0644, unsigned_sentry
+    sh "zip #{unsigned_sentry} #{sentry_props}"
+    sh "#{build_tools}/zipalign -v -p 4 #{unsigned_sentry} #{aligned}"
     sh "#{build_tools}/apksigner sign --ks #{ks} --ks-pass env:#{password_env} --out #{release} #{aligned}"
+
+    rm_rf "assets"
   end
 end

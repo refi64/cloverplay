@@ -31,4 +31,10 @@
       android:max="112"
       android:title="Round button (ABXY, L3, R3) size"
       app:showSeekBarValue="true" />
+  <SeekBarPreference
+      android:defaultValue="80"
+      android:key="lr_padding"
+      android:max="120"
+      android:title="L1/2,R1/2 outward side padding"
+      app:showSeekBarValue="true"/>
 </androidx.preference.PreferenceScreen>

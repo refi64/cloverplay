@@ -220,6 +220,19 @@ class OverlayService : AccessibilityService() {
       }
     }
 
+    // XXX: this is ugly
+    for (id in listOf(R.id.button_l1, R.id.button_l2, R.id.button_r1, R.id.button_r2)) {
+      view.findViewById<View>(id).apply {
+        updateLayoutParams<ConstraintLayout.LayoutParams> {
+          if (id == R.id.button_l1 || id == R.id.button_l2) {
+            leftMargin = getScaledSize("lr_padding")
+          } else {
+            rightMargin = getScaledSize("lr_padding")
+          }
+        }
+      }
+    }
+
     windowManager.addView(view, WindowManager.LayoutParams().apply {
       type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
       format = PixelFormat.TRANSLUCENT

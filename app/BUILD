@@ -82,9 +82,10 @@ kt_compiler_plugin(
     manifest = "AndroidManifest.trial.xml" if mode.endswith("trial") else "AndroidManifest.xml",
     manifest_values = {
         "applicationId": APP_IDS[mode],
-        "versionCode": "2",
-        "versionName": "0.2",
+        "versionCode": "364",
+        "versionName": "0.3",
     },
+    proguard_generate_mapping = True,
     proguard_specs = select({
         "//:release": [
             "//:third_party/proguard_specs/proguard-android-optimize.txt",

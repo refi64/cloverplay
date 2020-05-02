@@ -3,4 +3,5 @@ try-import user.bazelrc
 --host_jvm_args=-Xmx1g
 build --compilation_mode=dbg --cxxopt=-std=c++17 --force_pic \
   --discard_analysis_cache --local_ram_resources=HOST_RAM*0.3 \
-  --define=android_dexmerger_tool=d8_dexmerger
+  --define=android_dexmerger_tool=d8_dexmerger \
+  --fat_apk_cpu=arm64-v8a
