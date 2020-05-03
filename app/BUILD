@@ -1,13 +1,10 @@
-load("@rules_android//android:rules.bzl", "android_binary")
+load("@rules_android//android:rules.bzl", "android_binary", "android_library")
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_android_library", "kt_compiler_plugin")
+load("//:build/cpu_transition.bzl", "cpu_transition")
 load("//:build/java_build_config.bzl", "java_build_config", "trial_key")
+load(":build_info.bzl", "BUILD_CONFIGS", "BUILD_CPU_INFO")
 
 PACKAGE = "com.refi64.cloverplay"
-
-MODES = [
-    "trial",
-    "paid",
-]
 
 APP_IDS = {
     "trial": "com.refi64.cloverplay.trial",
@@ -19,12 +16,12 @@ trial_key(
     build_setting_default = "",
 )
 
-[java_build_config(
-    name = "%s_build_config" % mode,
-    application_id = APP_IDS[mode],
+java_build_config(
+    name = "trial_build_config",
+    application_id = APP_IDS["trial"],
     package = PACKAGE,
-    trial_key = ":%s_key" % mode,
-) for mode in MODES if mode.endswith("trial")]
+    trial_key = ":trial_key",
+)
 
 java_build_config(
     name = "paid_build_config",
@@ -39,17 +36,23 @@ kt_compiler_plugin(
     ],
 )
 
+[android_library(
+    name = "clover_service_lib_%s" % cpu,
+    exports = ["//service:clover_service_%s_transition" % cpu],
+) for cpu in BUILD_CPU_INFO if cpu != "fat"]
+
 [kt_android_library(
-    name = "%s_lib" % mode,
-    srcs = glob(["java/**"]) + [":%s_build_config" % mode],
+    name = "%s_lib_%s" % (
+        config.mode,
+        config.cpu,
+    ),
+    srcs = glob(["java/**"]) + [":%s_build_config" % config.mode],
     assets = [
-        "//service:clover_service",
+        "//service:clover_service_%s_transition" % cpu
+        for cpu in BUILD_CPU_INFO[config.cpu].cpus
     ],
     assets_dir = ".",
     custom_package = PACKAGE,
-    data = [
-        "//service:clover_service",
-    ],
     manifest = "AndroidManifest.xml",
     plugins = [":serialization_plugin"],
     resource_files = glob(["res/**"]),
@@ -66,16 +69,22 @@ kt_compiler_plugin(
         "@maven//:io_sentry_sentry_android",
         "@maven//:io_sentry_sentry_core",
         "@maven//:io_trialy_library_trialy",
+    ] + [
+        ":clover_service_lib_%s" % cpu
+        for cpu in BUILD_CPU_INFO[config.cpu].cpus
     ],
-) for mode in MODES]
+) for config in BUILD_CONFIGS]
 
 [android_binary(
-    name = "cloverplay_%s" % mode,
+    name = "cloverplay_%s_%s" % (
+        config.mode,
+        config.cpu,
+    ),
     custom_package = PACKAGE,
-    manifest = "AndroidManifest.trial.xml" if mode.endswith("trial") else "AndroidManifest.xml",
+    manifest = "AndroidManifest.trial.xml" if config.mode == "trial" else "AndroidManifest.xml",
     manifest_values = {
-        "applicationId": APP_IDS[mode],
-        "versionCode": "364",
+        "applicationId": APP_IDS[config.mode],
+        "versionCode": "3%s" % BUILD_CPU_INFO[config.cpu].version_suffix,
         "versionName": "0.3",
     },
     proguard_generate_mapping = True,
@@ -86,6 +95,27 @@ kt_compiler_plugin(
         ],
         "//conditions:default": [],
     }),
+    deps = [":%s_lib_%s" % (
+        config.mode,
+        config.cpu,
+    )],
+) for config in BUILD_CONFIGS]
+
+[cpu_transition(
+    name = "cloverplay_%s_apk_%s" % (
+        config.mode,
+        config.cpu,
+    ),
+    cpu = config.cpu,
+    dep = ":cloverplay_%s_%s" % (
+        config.mode,
+        config.cpu,
+    ),
     visibility = ["//visibility:public"],
-    deps = [":%s_lib" % mode],
-) for mode in MODES]
+) for config in BUILD_CONFIGS if config.cpu != "fat"]
+
+[alias(
+    name = "cloverplay_%s_apk_fat" % config.mode,
+    actual = "cloverplay_%s_fat" % config.mode,
+    visibility = ["//visibility:public"],
+) for config in BUILD_CONFIGS if config.cpu == "fat"]

@@ -36,43 +36,23 @@ class CloverService {
 
   enum class JoystickAxis { X, Y }
 
-//  @Serializable
-//  sealed class Event {
-//    @Serializable
-//    @SerialName("button")
-//    data class ButtonEvent(val button: Button, val pressed: Boolean) : Event()
-//
-//    @Serializable
-//    @SerialName("joystick")
-//    data class JoystickEvent(val joystick: Joystick, val axis: JoystickAxis, val position: Double) :
-//        Event()
-//
-//    @Serializable
-//    @SerialName("trigger")
-//    data class TriggerEvent(val trigger: Trigger, val position: Double) : Event()
-//
-//    @Serializable
-//    @SerialName("dpad")
-//    data class DpadEvent(val direction: DpadDirection, val pressed: Boolean) : Event()
-//  }
-
   interface Event
   @Serializable
   @SerialName("button")
   data class ButtonEvent(val button: Button, val pressed: Boolean) : Event
-    @Serializable
-    @SerialName("joystick")
-    data class JoystickEvent(val joystick: Joystick, val axis: JoystickAxis, val position: Double) :
-        Event
 
-    @Serializable
-    @SerialName("trigger")
-    data class TriggerEvent(val trigger: Trigger, val position: Double) : Event
+  @Serializable
+  @SerialName("joystick")
+  data class JoystickEvent(val joystick: Joystick, val axis: JoystickAxis, val position: Double) :
+      Event
 
-    @Serializable
-    @SerialName("dpad")
-    data class DpadEvent(val direction: DpadDirection, val pressed: Boolean) : Event
-//  }
+  @Serializable
+  @SerialName("trigger")
+  data class TriggerEvent(val trigger: Trigger, val position: Double) : Event
+
+  @Serializable
+  @SerialName("dpad")
+  data class DpadEvent(val direction: DpadDirection, val pressed: Boolean) : Event
 
   @Serializable
   data class Request(val controller: Controller, val events: List<Event>)
@@ -93,7 +73,7 @@ class CloverService {
   fun start(context: Context) {
     assert(process == null)
 
-    val exeName = "clover_service"
+    val exeName = "clover_service_arm${if (android.os.Process.is64Bit()) "64" else ""}"
     val exePath = Paths.get(context.filesDir.absolutePath, exeName)
 
     val serviceAsset = context.assets.open(exeName)
@@ -143,8 +123,7 @@ class CloverService {
     }
   }
 
-  private fun sendButton(button: Button, pressed: Boolean) =
-      sendEvent(ButtonEvent(button, pressed))
+  private fun sendButton(button: Button, pressed: Boolean) = sendEvent(ButtonEvent(button, pressed))
 
   private fun sendDpad(direction: DpadDirection, pressed: Boolean) =
       sendEvent(DpadEvent(direction, pressed))

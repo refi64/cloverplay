@@ -1,8 +1,15 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("//:build/cpu_transition.bzl", "cpu_transition")
+
+CPUS = [
+    "arm",
+    "arm64",
+    "host",
+]
 
 # Define a service binary for Android and one for host testing.
 [cc_binary(
-    name = name,
+    name = "clover_service_%s" % cpu,
     srcs = [
         "json.cc",
         "json.h",
@@ -26,7 +33,11 @@ load("@rules_cc//cc:defs.bzl", "cc_binary")
         "@fmt",
         "@rapidjson",
     ],
-) for name in [
-    "clover_service",
-    "clover_service_host",
-]]
+) for cpu in CPUS]
+
+[cpu_transition(
+    name = "clover_service_%s_transition" % cpu,
+    cpu = cpu,
+    dep = ":clover_service_%s" % cpu,
+    visibility = ["//visibility:public"],
+) for cpu in CPUS if cpu != "host"]

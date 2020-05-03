@@ -4,9 +4,11 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/.project-data-dir.iml" filepath="$PROJECT_DIR$/.blaze/modules/.project-data-dir.iml" />
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/.workspace.iml" filepath="$PROJECT_DIR$/.blaze/modules/.workspace.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_long_trial.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_long_trial.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid_arm.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid_arm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid_arm64.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid_arm64.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid_fat.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid_fat.iml" />
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_trial.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_trial.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_trial_fat.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_trial_fat.iml" />
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.paid_lib_base.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.paid_lib_base.iml" />
     </modules>
   </component>
