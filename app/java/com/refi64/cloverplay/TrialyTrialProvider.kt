@@ -19,8 +19,7 @@ class TrialyTrialProvider(private val context: Context) : TrialProvider() {
         val prefs = context.getSharedPreferences("trial_info", Context.MODE_PRIVATE)
         if (!prefs.contains(TRIAL_ORIGIN)) {
           prefs.edit {
-            val days = if (BuildConfig.APPLICATION_ID.endsWith(".ltrial")) 14L else 2L
-            putLong(TRIAL_ORIGIN, Instant.now().plus(days, ChronoUnit.DAYS).toEpochMilli())
+            putLong(TRIAL_ORIGIN, Instant.now().plus(2L, ChronoUnit.DAYS).toEpochMilli())
             commit()
           }
         }

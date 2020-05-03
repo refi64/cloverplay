@@ -6,23 +6,16 @@ PACKAGE = "com.refi64.cloverplay"
 
 MODES = [
     "trial",
-    "long_trial",
     "paid",
 ]
 
 APP_IDS = {
     "trial": "com.refi64.cloverplay.trial",
-    "long_trial": "com.refi64.cloverplay.ltrial",
     "paid": "com.refi64.cloverplay",
 }
 
 trial_key(
     name = "trial_key",
-    build_setting_default = "",
-)
-
-trial_key(
-    name = "long_trial_key",
     build_setting_default = "",
 )
 

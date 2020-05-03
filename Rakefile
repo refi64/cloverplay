@@ -61,7 +61,7 @@ task :sign do
   print 'Key password: '
   ENV[password_env] = STDIN.noecho(&:gets).chomp
 
-  ['trial', 'long_trial', 'paid'].each do |flavor|
+  ['trial', 'paid'].each do |flavor|
     unsigned = "#{bin}/cloverplay_#{flavor}_unsigned.apk"
     unsigned_sentry = "#{bin}/cloverplay_#{flavor}_unsigned_sentry.apk"
     aligned = "#{bin}/cloverplay_#{flavor}_unsigned_aligned.apk"
