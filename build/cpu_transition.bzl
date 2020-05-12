@@ -28,6 +28,7 @@ def _transition_impl(settings, attr):
     transition = {
         "//command_line_option:android_cpu": cpu,
         "//command_line_option:cpu": cpu,
+        "//command_line_option:fat_apk_cpu": cpu,
     }
 
     if cpu.startswith("arm"):
@@ -42,6 +43,7 @@ _transition = transition(
         "//command_line_option:android_cpu",
         "//command_line_option:cpu",
         "//command_line_option:crosstool_top",
+        "//command_line_option:fat_apk_cpu",
     ],
 )
 
