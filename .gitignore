@@ -4,6 +4,7 @@
 .clangd/
 bazel-*
 compile_commands.json
+config.bzl
 third_party/
 user.bazelrc
 *.keystore

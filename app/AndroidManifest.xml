@@ -21,7 +21,7 @@
 
     <meta-data
         android:name="io.sentry.dsn"
-        android:value="" />
+        android:value="${SENTRY_DSN}" />
 
     <service
         android:name=".OverlayService"

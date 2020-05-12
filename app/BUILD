@@ -1,7 +1,8 @@
 load("@rules_android//android:rules.bzl", "android_binary", "android_library")
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_android_library", "kt_compiler_plugin")
 load("//:build/cpu_transition.bzl", "cpu_transition")
-load("//:build/java_build_config.bzl", "java_build_config", "trial_key")
+load("//:build/java_build_config.bzl", "java_build_config")
+load("//:config.bzl", "SENTRY_DSN", "TRIAL_KEY")
 load(":build_info.bzl", "BUILD_CONFIGS", "BUILD_CPU_INFO")
 
 PACKAGE = "com.refi64.cloverplay"
@@ -11,16 +12,11 @@ APP_IDS = {
     "paid": "com.refi64.cloverplay",
 }
 
-trial_key(
-    name = "trial_key",
-    build_setting_default = "",
-)
-
 java_build_config(
     name = "trial_build_config",
     application_id = APP_IDS["trial"],
     package = PACKAGE,
-    trial_key = ":trial_key",
+    trial_key = TRIAL_KEY,
 )
 
 java_build_config(
@@ -84,8 +80,9 @@ kt_compiler_plugin(
     manifest = "AndroidManifest.trial.xml" if config.mode == "trial" else "AndroidManifest.xml",
     manifest_values = {
         "applicationId": APP_IDS[config.mode],
-        "versionCode": "3%s" % BUILD_CPU_INFO[config.cpu].version_suffix,
-        "versionName": "0.3",
+        "versionCode": "4%s" % BUILD_CPU_INFO[config.cpu].version_suffix,
+        "versionName": "0.4",
+        "SENTRY_DSN": SENTRY_DSN,
     },
     proguard_generate_mapping = True,
     proguard_specs = select({
