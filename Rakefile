@@ -61,13 +61,21 @@ task :sign do
   print 'Key password: '
   ENV[password_env] = STDIN.noecho(&:gets).chomp
 
-  ['trial', 'paid'].each do |flavor|
-    unsigned = "#{bin}/cloverplay_#{flavor}_unsigned.apk"
-    unsigned_sentry = "#{bin}/cloverplay_#{flavor}_unsigned_sentry.apk"
-    aligned = "#{bin}/cloverplay_#{flavor}_unsigned_aligned.apk"
-    release = "#{bin}/cloverplay_#{flavor}_release.apk"
-    map = "#{bin}/cloverplay_#{flavor}_proguard.map"
-    manifest = "#{bin}/_merged/cloverplay_#{flavor}/AndroidManifest.xml"
+  [
+    {:mode => 'trial', :cpu => 'fat'},
+    {:mode => 'paid', :cpu => 'fat'},
+    {:mode => 'paid', :cpu => 'arm'},
+    {:mode => 'paid', :cpu => 'arm64'},
+  ].each do |config|
+    cpu = config[:cpu]
+    mode = config[:mode]
+
+    unsigned = "#{bin}/cloverplay_#{mode}_#{cpu}_unsigned.apk"
+    unsigned_sentry = "#{bin}/cloverplay_#{mode}_#{cpu}_unsigned_sentry.apk"
+    aligned = "#{bin}/cloverplay_#{mode}_#{cpu}_unsigned_aligned.apk"
+    release = "#{bin}/cloverplay_#{mode}_#{cpu}_release.apk"
+    map = "#{bin}/cloverplay_#{mode}_#{cpu}_proguard.map"
+    manifest = "#{bin}/_merged/cloverplay_#{mode}_#{cpu}/AndroidManifest.xml"
     sentry_props = "assets/sentry-debug-meta.properties"
     ks = 'cloverplay.keystore'
 
