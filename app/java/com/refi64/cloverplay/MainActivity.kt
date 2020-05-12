@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun getEnabledServices(): List<String> = Settings.Secure.getString(contentResolver,
-      Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES).split(':')
+      Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)?.split(':') ?: listOf()
 
   private fun updateServiceState() = serviceControlToggle.apply {
     isChecked = getEnabledServices().contains(serviceName)
