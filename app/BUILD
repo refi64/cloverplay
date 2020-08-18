@@ -1,6 +1,6 @@
 load("@rules_android//android:rules.bzl", "android_binary", "android_library")
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_android_library", "kt_compiler_plugin")
-load("//:build/cpu_transition.bzl", "cpu_transition")
+load("//:build/cpu_transition.bzl", "android_binary_cpu_transition")
 load("//:build/java_build_config.bzl", "java_build_config")
 load("//:config.bzl", "SENTRY_DSN", "TRIAL_KEY")
 load(":build_info.bzl", "BUILD_CONFIGS", "BUILD_CPU_INFO")
@@ -98,7 +98,7 @@ kt_compiler_plugin(
     )],
 ) for config in BUILD_CONFIGS]
 
-[cpu_transition(
+[android_binary_cpu_transition(
     name = "cloverplay_%s_apk_%s" % (
         config.mode,
         config.cpu,

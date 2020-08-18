@@ -7,19 +7,17 @@ SHORT_CPU_MAP = {
     "arm64": "arm64-v8a",
 }
 
-_TransitionInfo = provider(fields = ["deps"])
-
-def _impl(ctx):
+def _android_native_cpu_transition_impl(ctx):
     providers = []
     dep = ctx.attr.dep[0]
 
     if CcInfo in dep:
         providers.append(dep[CcInfo])
-    if JavaInfo in dep:
-        providers.append(dep[JavaInfo])
+
+    if ApkInfo in dep:
+        providers.append(dep[ApkInfo])
 
     providers.append(DefaultInfo(files = dep.files))
-    providers.append(_TransitionInfo(deps = dep.files))
     return providers
 
 def _transition_impl(settings, attr):
@@ -36,6 +34,23 @@ def _transition_impl(settings, attr):
 
     return transition
 
+def _android_binary_cpu_transition_impl(ctx):
+    apk_info = ctx.attr.dep[0][ApkInfo]
+
+    inputs = [apk_info.signed_apk, apk_info.unsigned_apk]
+    outputs = []
+
+    for input in inputs:
+        output = ctx.actions.declare_file(input.basename)
+        ctx.actions.run(
+            inputs = [input],
+            outputs = [output],
+            executable = "cp",
+            arguments = [input.path, output.path],
+        )
+
+    return [DefaultInfo(files = depset(outputs))]
+
 _transition = transition(
     implementation = _transition_impl,
     inputs = [],
@@ -47,11 +62,22 @@ _transition = transition(
     ],
 )
 
-cpu_transition = rule(
-    implementation = _impl,
+android_native_cpu_transition = rule(
+    implementation = _android_native_cpu_transition_impl,
     attrs = {
         "cpu": attr.string(),
         "dep": attr.label(cfg = _transition),
+        "_whitelist_function_transition": attr.label(
+            default = "@bazel_tools//tools/whitelists/function_transition_whitelist",
+        ),
+    },
+)
+
+android_binary_cpu_transition = rule(
+    implementation = _android_binary_cpu_transition_impl,
+    attrs = {
+        "cpu": attr.string(),
+        "dep": attr.label(cfg = _transition, providers = [ApkInfo]),
         "_whitelist_function_transition": attr.label(
             default = "@bazel_tools//tools/whitelists/function_transition_whitelist",
         ),

@@ -1,5 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
-load("//:build/cpu_transition.bzl", "cpu_transition")
+load("//:build/cpu_transition.bzl", "android_native_cpu_transition")
 
 CPUS = [
     "arm",
@@ -35,7 +35,7 @@ CPUS = [
     ],
 ) for cpu in CPUS]
 
-[cpu_transition(
+[android_native_cpu_transition(
     name = "clover_service_%s_transition" % cpu,
     cpu = cpu,
     dep = ":clover_service_%s" % cpu,
