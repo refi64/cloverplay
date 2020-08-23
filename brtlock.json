@@ -5,7 +5,6 @@
     "https://github.com/Tencent/rapidjson/archive/8f4c021fa2f1e001d2376095928fc0532adf2ae6.tar.gz"                       : "3c8e1044b9b3226ff839663ff482b00750ca7dedb53026f8d8a31999865b8466",
     "https://dl.google.com/android/repository/tools_r25.2.5-linux.zip"                                                   : "577516819c8b5fae680f049d39014ff1ba4af870b687cab10595783e6f22d33e",
     "https://github.com/bazelbuild/rules_pkg/archive/79eafadca7b4fdb675b1cfa40b2ac20f23139271.tar.gz"                    : "8c3cd802d669186cdff6303f40dda567638870c6ca57e6df0f3e50a0d452be9f",
-    "https://github.com/grailbio/bazel-compilation-database/archive/0.4.3.tar.gz"                                        : "9a1f88851a556104c67065c3dafa99ce47235635713d717f26a43637c8b4ab3d",
     "https://github.com/bazelbuild/rules_cc/archive/7c3170fe93e13fbd4835bfa4f64ff93cf2c9b6c8.tar.gz"                     : "e87ba52315ec992d91c0306e19c723eef02e65ed84fd74cfc43c68cdb9dc7bed",
     "https://github.com/bazelbuild/rules_kotlin/archive/4a1213e7770ec2d1a1c0e5ba87c3d5452507bbab.tar.gz"                 : "c0764fdad1027fb5073131f661c1ef53468830301e113ff488115be47ebeff9e",
     "https://github.com/bazelbuild/rules_jvm_external/archive/bad9e2501279aea5268b1b8a5463ccc1be8ddf65.tar.gz"           : "7348f1bed95f15766c6448f4be2b3ed76136895bf33cf99d1fcec35cd6c2d13e",

@@ -3,7 +3,7 @@
 .brt/
 .clangd/
 bazel-*
-compile_commands.json
+compile_flags.txt
 config.bzl
 third_party/
 user.bazelrc

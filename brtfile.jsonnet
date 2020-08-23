@@ -1,7 +1,6 @@
 local android_sdk_components = import 'android_sdk_components.json';
 
 local bazel_ver = '3.0.0';
-local bazel_compdb_ver = '0.4.3';
 local fmt_ver = '6.2.0';
 local magic_enum_ver = '0.6.5';
 local proguard_specs_ver = 'android-10.0.0_r33';
@@ -60,11 +59,6 @@ local OfficialBazelRulesSnapshot(repo, revision) =
     {
       url: std.format('https://github.com/bazelbuild/bazel/releases/download/%s/bazel-%s-linux-x86_64', [bazel_ver, bazel_ver]),
       dest: 'third_party/bazel/bazel',
-    },
-    {
-      url: std.format('https://github.com/grailbio/bazel-compilation-database/archive/%s.tar.gz', bazel_compdb_ver),
-      dest: 'third_party/bazel-compdb',
-      arc: { prefix: std.format('bazel-compilation-database-%s', bazel_compdb_ver) },
     },
     {
       url: std.format('https://github.com/fmtlib/fmt/releases/download/%s/fmt-%s.zip', [fmt_ver, fmt_ver]),

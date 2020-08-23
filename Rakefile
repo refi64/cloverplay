@@ -50,8 +50,33 @@ task :update_android_sdk_components do
   File.write 'android_sdk_components.json', JSON.pretty_generate(components)
 end
 
-task :compdb do
-  sh 'third_party/bazel-compdb/generate.sh'
+task :compile_flags do
+  flags = [
+    '-xc++',
+    '-std=c++17',
+
+    # XXX: This is a huge mess, making clangd use the NDK is FUN(tm)
+    '-nostdinc',
+    '-nostdinc++',
+    '-stdlib=libc++',
+    "--sysroot=#{__dir__}/third_party/android-sdk/ndk/sysroot",
+    "-I#{__dir__}/third_party/android-sdk/ndk/sources/cxx-stl/llvm-libc++/include",
+    "-I#{__dir__}/third_party/android-sdk/ndk/sources/cxx-stl/llvm-libc++abi/include",
+    '-iwithsysroot/usr/include',
+    '-iwithsysroot/usr/include/aarch64-linux-android',
+    "-I#{__dir__}/third_party/android-sdk/ndk/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/9.0.8/include",
+
+    "-iquote#{__dir__}",
+    # TODO: use brt for Abseil
+    "-iquote#{__dir__}/external/absl",
+    "-iquote#{__dir__}/third_party/fmt/include",
+    "-iquote#{__dir__}/third_party/magic_enum",
+    "-iquote#{__dir__}/third_party/rapidjson/include",
+  ]
+
+  File.open 'compile_flags.txt', 'w' do |file|
+    file.puts flags
+  end
 end
 
 task :sign do
