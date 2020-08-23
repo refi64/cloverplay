@@ -1,6 +1,10 @@
 #include "errors.h"
 #include <iostream>
 
+#ifdef __ANDROID_API__
+#include <android/log.h>
+#endif
+
 namespace {
 
 absl::StatusCode StatusCodeFromErrno(int ec) {
@@ -35,6 +39,11 @@ absl::Status StatusFromErrno(int ec, std::string_view message) {
 
 void CheckStatus(const absl::Status& status) {
   if (!status.ok()) {
+#ifdef __ANDROID_API__
+    std::string err = status.ToString();
+    __android_log_print(ANDROID_LOG_ERROR, "clover-service", "%s", err.c_str());
+#else
     fmt::print(std::cerr, "WARNING: {}\n", status.ToString());
+#endif
   }
 }

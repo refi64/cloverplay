@@ -1,23 +1,82 @@
 package com.refi64.cloverplay
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.PointF
+import android.os.*
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import io.sentry.core.Sentry
-import io.sentry.core.SentryEvent
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
-import java.util.concurrent.TimeUnit
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.SerializersModule
+import com.topjohnwu.superuser.ipc.RootService
+import java.lang.Exception
+import java.lang.RuntimeException
 
 class CloverService {
+  private class Host : RootService(), Handler.Callback {
+    companion object {
+      const val messageEventsKey = "events"
+      const val tag = "CloverServiceHost"
+    }
+
+    private lateinit var jni: CloverServiceJNI
+
+    private var handle = 0L
+
+    override fun onBind(intent: Intent): IBinder {
+      Log.v(tag, "onBind")
+
+      try {
+        if (!this::jni.isInitialized) {
+          jni = CloverServiceJNI(this)
+        }
+
+        handle = jni.create()
+
+        val handler = Handler(Looper.getMainLooper(), this)
+        return Messenger(handler).binder
+      } catch (ex: Exception) {
+        Sentry.captureException(ex)
+        throw ex
+      }
+    }
+
+    override fun handleMessage(msg: Message): Boolean {
+      Log.v(tag, "handleMessage")
+      var events: String? = null
+
+      try {
+        if (handle == 0L) {
+          throw RuntimeException("attempted to send events without a handle")
+        }
+
+        events = msg.data.getString(messageEventsKey)!!
+        jni.sendEvents(handle, events)
+      } catch (ex: Exception) {
+        Sentry.captureException(ex, events)
+        Log.e(tag, "Exception handling events ($events)", ex)
+      }
+
+      return false
+    }
+
+    override fun onUnbind(intent: Intent): Boolean {
+      Log.v(tag, "onUnbind")
+
+      if (handle != 0L) {
+        jni.destroy(handle)
+        handle = 0
+      }
+
+      return super.onUnbind(intent)
+    }
+  }
+
   enum class Controller { STADIA, XBOX }
 
   enum class Button {
@@ -37,6 +96,7 @@ class CloverService {
   enum class JoystickAxis { X, Y }
 
   interface Event
+
   @Serializable
   @SerialName("button")
   data class ButtonEvent(val button: Button, val pressed: Boolean) : Event
@@ -57,40 +117,43 @@ class CloverService {
   @Serializable
   data class Request(val controller: Controller, val events: List<Event>)
 
-  @Serializable
-  data class Reply(val error: String = "")
+  private var messenger: Messenger? = null
 
-  private var process: Process? = null
-  private var processStdin: BufferedWriter? = null
-  private var processStdout: BufferedReader? = null
+  private inner class Connection : ServiceConnection {
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+      messenger = Messenger(service)
+    }
 
-  private var tag = "CloverService"
+    override fun onServiceDisconnected(name: ComponentName?) {
+      messenger = null
+    }
+  }
+
+  private val connection = Connection()
+
+  companion object {
+    private const val TAG = "CloverService"
+  }
 
   lateinit var controller: Controller
 
-  val started get() = process != null
+  val started get() = messenger != null
 
   fun start(context: Context) {
-    assert(process == null)
+    if (messenger == null) {
+      Log.i(TAG, "Starting host service")
 
-    val exeName = "clover_service_arm${if (android.os.Process.is64Bit()) "64" else ""}"
-    val exePath = Paths.get(context.filesDir.absolutePath, exeName)
-
-    val serviceAsset = context.assets.open(exeName)
-    Files.copy(serviceAsset, exePath, StandardCopyOption.REPLACE_EXISTING)
-
-    exePath.toFile().setExecutable(true)
-
-    val builder = ProcessBuilder("su", "-c", exePath.toString())
-    builder.redirectError(ProcessBuilder.Redirect.INHERIT)
-
-    process = builder.start().apply {
-      processStdin = outputStream.bufferedWriter()
-      processStdout = inputStream.bufferedReader()
+      val intent = Intent(context, Host::class.java)
+      RootService.bind(intent, connection)
     }
   }
 
   private fun sendEvent(event: Event) {
+    if (!started) {
+      Log.e(TAG, "Can't send event to non-started service")
+      return
+    }
+
     val module = SerializersModule {
       polymorphic(Event::class) {
         ButtonEvent::class with ButtonEvent.serializer()
@@ -105,22 +168,11 @@ class CloverService {
     val request = Request(controller, listOf(event))
     val requestJson = json.stringify(Request.serializer(), request)
 
-    Log.v(tag, "Generated JSON message: $requestJson")
-    processStdin!!.apply {
-      appendln(requestJson)
-      flush()
-    }
+    Log.v(TAG, "Generated JSON message: $requestJson")
 
-    val replyJson = processStdout!!.readLine()
-    Log.v(tag, "JSON response: $replyJson")
-
-    val reply = json.parse(Reply.serializer(), replyJson)
-    if (reply.error.isNotEmpty()) {
-      Log.e(tag, "Server returned: ${reply.error}")
-      Sentry.captureEvent(SentryEvent().apply {
-        setTag("server-error", reply.error)
-      })
-    }
+    val message = Message.obtain()
+    message.data.putString(Host.messageEventsKey, requestJson)
+    messenger!!.send(message)
   }
 
   private fun sendButton(button: Button, pressed: Boolean) = sendEvent(ButtonEvent(button, pressed))
@@ -178,14 +230,6 @@ class CloverService {
   }
 
   fun destroy() {
-    process?.apply {
-      processStdin!!.apply {
-        appendln("q")
-        flush()
-      }
-
-      waitFor(1, TimeUnit.SECONDS)
-      destroyForcibly()
-    }
+    RootService.unbind(connection)
   }
 }

@@ -9,15 +9,13 @@ class Service {
 
   static StatusOr<Service> Create();
 
-  absl::Status Run();
+  absl::Status HandleRequest(std::string_view req_json);
 
  private:
   Service(std::vector<UinputConnection> uinput_connections, StadiaGamepad stadia,
           Xbox360Gamepad xbox)
       : uinput_connections_(std::move(uinput_connections)), stadia_(std::move(stadia)),
         xbox_(std::move(xbox)) {}
-
-  absl::Status HandleRequest(std::string_view req_json);
 
   absl::Status HandleButtonEvent(Gamepad* gamepad, const Event::Button& event);
   absl::Status HandleJoystickEvent(Gamepad* gamepad, const Event::Joystick& event);

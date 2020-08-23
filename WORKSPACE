@@ -66,16 +66,19 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
     artifacts = [
-        "androidx.appcompat:appcompat:1.1.0",
+        "androidx.appcompat:appcompat:1.2.0",
         "androidx.constraintlayout:constraintlayout:1.1.3",
-        "androidx.core:core-ktx:1.2.0",
-        "androidx.preference:preference:1.1.0",
-        "com.github.topjohnwu.libsu:core:2.5.1",
-        "com.google.android.material:material:1.1.0",
+        "androidx.core:core-ktx:1.3.1",
+        "androidx.preference:preference:1.1.1",
+        "androidx.lifecycle:lifecycle-common:2.2.0",
+        "com.github.topjohnwu.libsu:core:3.0.2",
+        "com.github.topjohnwu.libsu:service:3.0.2",
+        "com.google.android.material:material:1.2.0",
         "de.psdev.licensesdialog:licensesdialog:2.1.0",
         "io.sentry:sentry-android:2.0.0",
         "io.sentry:sentry-core:2.0.0",
         "io.trialy.library:trialy:1.0.9",
+        "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0",
     ],
     generate_compat_repositories = True,
     repositories = [

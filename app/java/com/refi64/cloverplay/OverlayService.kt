@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.*
 import android.graphics.PixelFormat
 import android.graphics.Rect
+import android.util.Log
 import android.view.*
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityWindowInfo
@@ -17,6 +18,7 @@ import androidx.preference.PreferenceManager
 class OverlayService : AccessibilityService() {
   companion object {
     private const val NOTIFICATION_CHANNEL_ID = "reactivate"
+    private const val TAG = "OverlayService"
   }
 
   private enum class Profile { Stadia, Xcloud }
@@ -111,11 +113,16 @@ class OverlayService : AccessibilityService() {
   @SuppressLint("InflateParams")
   private fun activateProfile(profile: Profile) {
     if (overlayView != null || !cloverService.started) {
+      if (!cloverService.started) {
+        Log.i(TAG, "Ignoring activate, because service is not available yet")
+      }
+
       return
     }
 
     TrialProvider.getProvider(this).provide { state ->
       if (state.expired) {
+        Log.i(TAG, "Trial has expired, so disabling self")
         disableSelf()
       }
     }

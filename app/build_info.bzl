@@ -20,6 +20,8 @@ BUILD_CPU_INFO = {
     ),
 }
 
+BUILD_MODES = ["trial", "paid"]
+
 BUILD_CONFIGS = [
     struct(
         cpu = "fat",

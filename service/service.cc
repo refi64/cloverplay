@@ -1,7 +1,7 @@
 #include "service.h"
 
-#include <rapidjson/ostreamwrapper.h>
-#include <rapidjson/writer.h>
+#include "rapidjson/ostreamwrapper.h"
+#include "rapidjson/writer.h"
 
 #include <memory>
 #include <string>
@@ -18,33 +18,6 @@ StatusOr<Service> Service::Create() {
   Xbox360Gamepad xbox = TRY_STATUS_OR(Xbox360Gamepad::Create(&connections[1]));
 
   return Service(std::move(connections), std::move(stadia), std::move(xbox));
-}
-
-absl::Status Service::Run() {
-  for (;;) {
-    std::string req_json;
-    if (!std::getline(std::cin, req_json)) {
-      return absl::Status(absl::StatusCode::kResourceExhausted, "EOF on stdin");
-    }
-
-    if (req_json == "q") {
-      std::cerr << "Quitting..." << std::endl;
-      return absl::OkStatus();
-    }
-
-    rapidjson::Document reply;
-    reply.SetObject();
-
-    if (absl::Status status = HandleRequest(req_json); !status.ok()) {
-      reply.AddMember("error", status.ToString(), reply.GetAllocator());
-    }
-
-    rapidjson::OStreamWrapper osw(std::cout);
-    rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
-    reply.Accept(writer);
-
-    std::cout << std::endl;
-  }
 }
 
 absl::Status Service::HandleRequest(std::string_view req_json) {
