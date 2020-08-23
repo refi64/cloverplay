@@ -1,10 +1,12 @@
 .aswb/.blaze
+.aswb/.gradle
 .aswb/.idea/libraries
 .brt/
 .clangd/
 bazel-*
 compile_flags.txt
 config.bzl
+external
 third_party/
 user.bazelrc
 *.keystore
