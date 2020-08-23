@@ -41,7 +41,12 @@ def _android_binary_cpu_transition_impl(ctx):
     outputs = []
 
     for input in inputs:
-        output = ctx.actions.declare_file(input.basename)
+        if input.basename.endswith("_unsigned.apk"):
+            output_name = "%s_unsigned.apk" % ctx.label.name
+        else:
+            output_name = "%s.apk" % ctx.label.name
+
+        output = ctx.actions.declare_file(output_name)
         ctx.actions.run(
             inputs = [input],
             outputs = [output],
@@ -49,7 +54,7 @@ def _android_binary_cpu_transition_impl(ctx):
             arguments = [input.path, output.path],
         )
 
-    return [DefaultInfo(files = depset(outputs))]
+    return [DefaultInfo(files = depset(outputs, transitive = [depset(inputs)]))]
 
 _transition = transition(
     implementation = _transition_impl,
