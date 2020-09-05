@@ -1,5 +1,6 @@
 package com.refi64.cloverplay
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -32,8 +33,11 @@ class SmallRectControllerButtonView(context: Context, attrs: AttributeSet) :
     inflater.inflate(R.layout.small_rect_controller_button_view, this)
   }
 
-  override fun setOnTouchListener(l: OnTouchListener?) {
-    findViewById<MaterialButton>(R.id.button).setOnTouchListener(l)
+  @SuppressLint("ClickableViewAccessibility")
+  override fun setOnTouchListener(listener: OnTouchListener?) {
+    findViewById<MaterialButton>(R.id.button).setOnTouchListener { _, event ->
+      listener?.onTouch(this, event) ?: false
+    }
   }
 
   override fun onFinishInflate() {

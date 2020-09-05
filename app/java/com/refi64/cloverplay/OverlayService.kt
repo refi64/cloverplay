@@ -5,7 +5,9 @@ import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.*
 import android.graphics.PixelFormat
+import android.graphics.Point
 import android.graphics.Rect
+import android.graphics.RectF
 import android.util.Log
 import android.view.*
 import android.view.accessibility.AccessibilityEvent
@@ -22,6 +24,8 @@ class OverlayService : AccessibilityService() {
   }
 
   private enum class Profile { Stadia, Xcloud }
+
+  private val abxyButtons = listOf(R.id.button_a, R.id.button_b, R.id.button_x, R.id.button_y)
 
   private val largeRoundButtons = listOf(R.id.button_a,
       R.id.button_b,
@@ -171,16 +175,30 @@ class OverlayService : AccessibilityService() {
 
     attachMappedTouchListeners(view,
         cloverService::createButtonTouchListener,
-        R.id.button_a to CloverService.Button.A,
-        R.id.button_b to CloverService.Button.B,
-        R.id.button_x to CloverService.Button.X,
-        R.id.button_y to CloverService.Button.Y,
         R.id.button_l1 to CloverService.Button.L1,
         R.id.button_l3 to CloverService.Button.L3,
         R.id.button_r1 to CloverService.Button.R1,
         R.id.button_r3 to CloverService.Button.R3,
         R.id.button_home to CloverService.Button.HOME,
         *extraButtons)
+
+    val abxyListenerFactory = if (preferences.getBoolean("multi_press", false)) {
+      Log.d(TAG, "multi_press is enabled")
+
+      MultiPressController(abxyButtons.toSet(), view as ViewGroup).let { multiPressController ->
+        { button: CloverService.Button ->
+          val listener = cloverService.createButtonTouchListener(button)
+          multiPressController.getListener(delegate = listener)
+        }
+      }
+    } else cloverService::createButtonTouchListener
+
+    attachMappedTouchListeners(view,
+        abxyListenerFactory,
+        R.id.button_a to CloverService.Button.A,
+        R.id.button_b to CloverService.Button.B,
+        R.id.button_x to CloverService.Button.X,
+        R.id.button_y to CloverService.Button.Y)
 
     attachMappedTouchListeners(view,
         cloverService::createDpadTouchListener,

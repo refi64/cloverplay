@@ -40,8 +40,10 @@ class RoundControllerButtonView(context: Context, attrs: AttributeSet) :
     }
 
   @SuppressLint("ClickableViewAccessibility")
-  override fun setOnTouchListener(l: OnTouchListener?) {
-    findViewById<FloatingActionButton>(R.id.button).setOnTouchListener(l)
+  override fun setOnTouchListener(listener: OnTouchListener?) {
+    findViewById<FloatingActionButton>(R.id.button).setOnTouchListener { _, event ->
+      listener?.onTouch(this, event) ?: false
+    }
   }
 
   override fun setOnLongClickListener(l: OnLongClickListener?) {

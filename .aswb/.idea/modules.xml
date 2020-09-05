@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/.project-data-dir.iml" filepath="$PROJECT_DIR$/.blaze/modules/.project-data-dir.iml" />
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/.workspace.iml" filepath="$PROJECT_DIR$/.blaze/modules/.workspace.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid_fat_apk.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.cloverplay_paid_fat_apk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.blaze/modules/.workspace.resources.iml" filepath="$PROJECT_DIR$/.blaze/modules/.workspace.resources.iml" />
       <module fileurl="file://$PROJECT_DIR$/.blaze/modules/app.paid_lib_base.iml" filepath="$PROJECT_DIR$/.blaze/modules/app.paid_lib_base.iml" />
     </modules>
   </component>

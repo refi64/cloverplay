@@ -37,4 +37,8 @@
       android:max="148"
       android:title="L1/2,R1/2 outward side padding"
       app:showSeekBarValue="true"/>
+  <SwitchPreference
+      android:defaultValue="false"
+      android:key="multi_press"
+      android:title="Multi-button press" />
 </androidx.preference.PreferenceScreen>

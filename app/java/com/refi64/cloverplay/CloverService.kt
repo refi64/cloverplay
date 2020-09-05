@@ -1,5 +1,6 @@
 package com.refi64.cloverplay
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -186,6 +187,7 @@ class CloverService {
   private fun sendJoystick(joystick: Joystick, axis: JoystickAxis, position: Double) =
       sendEvent(JoystickEvent(joystick, axis, position))
 
+  @SuppressLint("ClickableViewAccessibility")
   private fun createPressableTouchListener(
       handler: (pressed: Boolean) -> Unit): View.OnTouchListener {
     return View.OnTouchListener { _, event ->
