@@ -38,7 +38,6 @@ class OverlayService : AccessibilityService() {
       R.id.button_right,
       R.id.button_up,
       R.id.button_down,
-      R.id.button_l1,
       R.id.button_l2,
       R.id.button_l3,
       R.id.show_button,
@@ -48,11 +47,22 @@ class OverlayService : AccessibilityService() {
       R.id.button_b,
       R.id.button_x,
       R.id.button_y,
-      R.id.button_r1,
       R.id.button_r2,
       R.id.button_r3,
       R.id.show_button,
       R.id.hide_button)
+
+  private val bottomButtons =
+      // Only button A, because BXY are all relative to A
+      listOf(R.id.button_up,
+          R.id.button_down,
+          R.id.button_left,
+          R.id.button_right,
+          R.id.button_a,
+          R.id.show_button,
+          R.id.hide_button,
+          R.id.button_l3,
+          R.id.button_r3)
 
   private var overlayView: View? = null
   private var cloverService = CloverService()
@@ -233,28 +243,34 @@ class OverlayService : AccessibilityService() {
       view.findViewById<RoundControllerButtonView>(id).apply {
         customSize = getScaledSize("round_size")
 
-        updateLayoutParams<ConstraintLayout.LayoutParams> {
-          if (id != R.id.button_a) {
-            bottomMargin = getScaledSize("abxy_spacing")
-          }
+        if (id != R.id.button_l3 && id != R.id.button_r3) {
+          updateLayoutParams<ConstraintLayout.LayoutParams> {
+            if (id != R.id.button_a) {
+              bottomMargin = getScaledSize("abxy_spacing")
+            }
 
-          if (id != R.id.button_b && id != R.id.button_l3 && id != R.id.button_r3) {
-            rightMargin = getScaledSize("abxy_spacing")
+            if (id != R.id.button_b) {
+              rightMargin = getScaledSize("abxy_spacing")
+            }
           }
         }
       }
     }
 
     // XXX: this is ugly
-    for (id in listOf(R.id.button_l1, R.id.button_l2, R.id.button_r1, R.id.button_r2)) {
-      view.findViewById<View>(id).apply {
-        updateLayoutParams<ConstraintLayout.LayoutParams> {
-          if (id == R.id.button_l1 || id == R.id.button_l2) {
-            leftMargin = getScaledSize("lr_padding")
-          } else {
-            rightMargin = getScaledSize("lr_padding")
-          }
+    for (id in listOf(R.id.button_l2, R.id.button_r2)) {
+      view.findViewById<View>(id).updateLayoutParams<ConstraintLayout.LayoutParams> {
+        if (id == R.id.button_l2) {
+          leftMargin = getScaledSize("l2_padding")
+        } else {
+          rightMargin = getScaledSize("r2_padding")
         }
+      }
+    }
+
+    for (id in bottomButtons) {
+      view.findViewById<View>(id).updateLayoutParams<ConstraintLayout.LayoutParams> {
+        bottomMargin += getScaledSize("bottom_padding")
       }
     }
 

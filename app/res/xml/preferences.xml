@@ -2,13 +2,13 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
   <SeekBarPreference
-      android:defaultValue="0"
+      android:defaultValue="6"
       android:key="left_margin"
       android:max="128"
       android:title="@string/pref_left_margin"
       app:showSeekBarValue="true" />
   <SeekBarPreference
-      android:defaultValue="0"
+      android:defaultValue="6"
       android:key="right_margin"
       android:max="128"
       android:title="@string/pref_right_margin"
@@ -20,22 +20,34 @@
       android:title="@string/pref_joystick_radius"
       app:showSeekBarValue="true" />
   <SeekBarPreference
-      android:defaultValue="52"
+      android:defaultValue="50"
       android:key="abxy_spacing"
       android:max="96"
       android:title="Spacing between ABXY"
       app:showSeekBarValue="true"/>
   <SeekBarPreference
-      android:defaultValue="64"
+      android:defaultValue="60"
       android:key="round_size"
       android:max="112"
       android:title="Round button (ABXY, L3, R3) size"
       app:showSeekBarValue="true" />
   <SeekBarPreference
-      android:defaultValue="80"
-      android:key="lr_padding"
+      android:defaultValue="12"
+      android:key="bottom_padding"
+      android:max="64"
+      android:title="Bottom button padding"
+      app:showSeekBarValue="true" />
+  <SeekBarPreference
+      android:defaultValue="56"
+      android:key="l2_padding"
       android:max="148"
-      android:title="L1/2,R1/2 outward side padding"
+      android:title="L2 left side padding"
+      app:showSeekBarValue="true"/>
+  <SeekBarPreference
+      android:defaultValue="56"
+      android:key="r2_padding"
+      android:max="148"
+      android:title="R2 right padding"
       app:showSeekBarValue="true"/>
   <SwitchPreference
       android:defaultValue="false"
