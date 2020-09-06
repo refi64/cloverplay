@@ -323,7 +323,7 @@ class OverlayService : AccessibilityService() {
     val visibleProfile = window.root?.let { root ->
       val profile = when (root.packageName) {
         "com.google.stadia.android" -> Profile.Stadia
-        "com.microsoft.xcloud" -> Profile.Xcloud
+        "com.gamepass", "com.gamepass.beta" -> Profile.Xcloud
         else -> null
       }
       root.recycle()
