@@ -16,6 +16,7 @@ import de.psdev.licensesdialog.LicensesDialog
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.concurrent.Executors
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     get() {
       return "${BuildConfig.APPLICATION_ID}/com.refi64.cloverplay.OverlayService"
     }
+
+  val suExecutor = Executors.newSingleThreadExecutor()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -50,8 +53,10 @@ class MainActivity : AppCompatActivity() {
         trialText.setText(R.string.trial_expired)
       } else {
         if (state.expiration != null) {
-          val expiration = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-              .withZone(ZoneId.systemDefault()).format(state.expiration)
+          val expiration = DateTimeFormatter
+              .ofLocalizedDateTime(FormatStyle.SHORT)
+              .withZone(ZoneId.systemDefault())
+              .format(state.expiration)
           trialText.text = resources.getString(R.string.trial_expires_soon, expiration)
         } else {
           trialText.text = ""
@@ -91,8 +96,9 @@ class MainActivity : AppCompatActivity() {
     popup.show()
   }
 
-  private fun getEnabledServices(): List<String> = Settings.Secure.getString(contentResolver,
-      Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)?.split(':') ?: listOf()
+  private fun getEnabledServices(): List<String> = Settings.Secure
+      .getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+      ?.split(':') ?: listOf()
 
   private fun updateServiceState() = serviceControlToggle.apply {
     isChecked = getEnabledServices().contains(serviceName)
@@ -114,7 +120,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     val servicesString = services.joinToString(":")
-    Shell.su("settings put secure enabled_accessibility_services $servicesString")
+    Shell
+        .su("settings put secure enabled_accessibility_services $servicesString")
         .submit { result ->
           updateServiceState()
 
@@ -131,17 +138,21 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun checkRootAccess() {
-    if (!Shell.rootAccess()) {
-      AlertDialog.Builder(this).apply {
-        setTitle(R.string.root_failure_title)
-        setMessage(R.string.root_failure_message)
-        setCancelable(false)
-        setPositiveButton(R.string.root_failure_quit) { _, _ ->
-          finishAffinity()
-          exitProcess(0)
-        }
+    suExecutor.submit {
+      if (!Shell.rootAccess()) {
+        runOnUiThread {
+          AlertDialog.Builder(this).apply {
+            setTitle(R.string.root_failure_title)
+            setMessage(R.string.root_failure_message)
+            setCancelable(false)
+            setPositiveButton(R.string.root_failure_quit) { _, _ ->
+              finishAffinity()
+              exitProcess(0)
+            }
 
-        show()
+            show()
+          }
+        }
       }
     }
   }
