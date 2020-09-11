@@ -10,8 +10,8 @@ abstract class TrialProvider {
 
   companion object {
     fun getProvider(context: Context): TrialProvider =
-        @Suppress("ConstantConditionIf") if (BuildConfig.TRIAL_KEY != "") {
-          TrialyTrialProvider(context)
+        if (BuildConfig.APPLICATION_ID.endsWith(".trial")) {
+          TriaforceTrialProvider(context.contentResolver)
         } else {
           NullTrialProvider()
         }

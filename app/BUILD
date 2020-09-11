@@ -2,7 +2,7 @@ load("@rules_android//android:rules.bzl", "android_binary", "android_library")
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_android_library", "kt_compiler_plugin")
 load("//:build/cpu_transition.bzl", "android_binary_cpu_transition")
 load("//:build/java_build_config.bzl", "java_build_config")
-load("//:config.bzl", "SENTRY_DSN", "TRIAL_KEY")
+load("//:config.bzl", "SENTRY_DSN")
 load(":build_info.bzl", "BUILD_CONFIGS", "BUILD_CPU_INFO", "BUILD_MODES")
 
 PACKAGE = "com.refi64.cloverplay"
@@ -16,7 +16,6 @@ java_build_config(
     name = "trial_build_config",
     application_id = APP_IDS["trial"],
     package = PACKAGE,
-    trial_key = TRIAL_KEY,
 )
 
 java_build_config(
@@ -65,10 +64,10 @@ android_library(
         "@maven//:com_github_topjohnwu_libsu_core",
         "@maven//:com_github_topjohnwu_libsu_service",
         "@maven//:com_google_android_material_material",
+        "@maven//:com_squareup_okhttp3_okhttp",
         "@maven//:de_psdev_licensesdialog_licensesdialog",
         "@maven//:io_sentry_sentry_android",
         "@maven//:io_sentry_sentry_core",
-        "@maven//:io_trialy_library_trialy",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_runtime",
     ],
 ) for mode in BUILD_MODES]
