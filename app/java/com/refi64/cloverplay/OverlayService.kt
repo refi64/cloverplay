@@ -340,6 +340,10 @@ class OverlayService : AccessibilityService() {
       val profile = when (root.packageName) {
         "com.google.stadia.android" -> Profile.Stadia
         "com.gamepass", "com.gamepass.beta" -> Profile.Xcloud
+        "com.nvidia.geforcenow" -> {
+          if (preferences.getBoolean("gfn", false)) Profile.Xcloud
+          else null
+        }
         else -> null
       }
       root.recycle()

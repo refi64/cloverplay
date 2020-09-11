@@ -53,4 +53,8 @@
       android:defaultValue="false"
       android:key="multi_press"
       android:title="Multi-button press" />
+  <SwitchPreference
+      android:defaultValue="false"
+      android:key="gfn"
+      android:title="Show on GeForce Now"/>
 </androidx.preference.PreferenceScreen>
