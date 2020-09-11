@@ -67,13 +67,13 @@ class SmallRectControllerButtonView(context: Context, attrs: AttributeSet) :
         }
 
         "square" -> button.updateLayoutParams {
-          width = (60.0f * metrics.density).toInt()
+          width = (72.0f * metrics.density).toInt()
           height = (56.0f * metrics.density).toInt()
         }
 
         "diagonal" -> button.updateLayoutParams {
-          width = (76.0f * metrics.density).toInt()
-          height = (56.0f * metrics.density).toInt()
+          width = (70.0f * metrics.density).toInt()
+          height = (60.0f * metrics.density).toInt()
         }
       }
     }
