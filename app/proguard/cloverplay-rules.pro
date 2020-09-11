@@ -16,42 +16,40 @@
     public <init>(android.content.Context, android.util.AttributeSet);
 }
 
-# From: https://github.com/facebookarchive/conceal/blob/master/proguard_annotations.pro
+# From: https://github.com/square/okhttp/blob/master/okhttp/src/main/resources/META-INF/proguard/okhttp3.pro
 
--keep,allowobfuscation @interface com.facebook.crypto.proguard.annotations.DoNotStrip
--keep,allowobfuscation @interface com.facebook.crypto.proguard.annotations.KeepGettersAndSetters
--keep @com.facebook.crypto.proguard.annotations.DoNotStrip class *
--keepclassmembers class * {
-    @com.facebook.crypto.proguard.annotations.DoNotStrip *;
-}
--keepclassmembers @com.facebook.crypto.proguard.annotations.KeepGettersAndSetters class * {
-  void set*(***);
-  *** get*();
-}
--keepclassmembers class * {
-    com.facebook.jni.HybridData *;
-    <init>(com.facebook.jni.HybridData);
-}
--keepclasseswithmembers class * {
-    com.facebook.jni.HybridData *;
-}
--keep,allowobfuscation @interface com.facebook.proguard.annotations.DoNotStrip
--keep,allowobfuscation @interface com.facebook.proguard.annotations.KeepGettersAndSetters
--keep @com.facebook.proguard.annotations.DoNotStrip class *
--keepclassmembers class * {
-    @com.facebook.proguard.annotations.DoNotStrip *;
-}
--keepclassmembers @com.facebook.proguard.annotations.KeepGettersAndSetters class * {
-  void set*(***);
-  *** get*();
-}
+# JSR 305 annotations are for embedding nullability information.
+-dontwarn javax.annotation.**
+
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+# Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
+-dontwarn org.codehaus.mojo.animal_sniffer.*
+
+# OkHttp platform used only on JVM and when Conscrypt dependency is available.
+-dontwarn okhttp3.internal.**
 
 # From: https://github.com/topjohnwu/libsu/blob/master/core/proguard-rules.pro
 
--assumenosideeffects class com.topjohnwu.superuser.internal.InternalUtils {
-  public static *** log(...);
+-assumenosideeffects class com.topjohnwu.superuser.internal.Utils {
+	public static void log(...);
+	public static void ex(...);
 }
--keep,allowobfuscation class * extends com.topjohnwu.superuser.Shell$Initializer
+-assumenosideeffects class com.topjohnwu.superuser.Shell.Config {
+	public static void verboseLogging(...);
+}
+# TODO: Figure out why this isn't working (likely an old proguard version?)
+#-assumevalues class com.topjohnwu.superuser.internal.Utils {
+#	public static boolean vLog() return false;
+#}
+#-assumevalues class android.os.Debug {
+#	public static boolean isDebuggerConnected() return false;
+#}
+
+-keep,allowobfuscation class * extends com.topjohnwu.superuser.Shell$Initializer { *; }
+-keep,allowobfuscation class com.topjohnwu.superuser.ipc.IPCServer { *; }
+-keep,allowobfuscation class * extends com.topjohnwu.superuser.ipc.RootService { *; }
 
 # From: https://github.com/Kotlin/kotlinx.serialization#androidjvm
 
