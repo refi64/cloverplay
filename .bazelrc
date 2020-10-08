@@ -8,3 +8,4 @@ build --compilation_mode=dbg --cxxopt=-std=c++17 --force_pic \
   --define=android_dexmerger_tool=d8_dexmerger \
   --fat_apk_cpu=armeabi-v7a,arm64-v8a \
   --experimental_google_legacy_api
+query --experimental_google_legacy_api

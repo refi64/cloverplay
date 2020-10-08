@@ -1,6 +1,6 @@
 load("@rules_android//android:rules.bzl", "android_binary", "android_library")
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_android_library", "kt_compiler_plugin")
-load("//:build/cpu_transition.bzl", "android_binary_cpu_transition")
+load("//:build/android_binary_export.bzl", "android_binary_export", "android_binary_transition_export")
 load("//:build/java_build_config.bzl", "java_build_config")
 load("//:config.bzl", "SENTRY_DSN")
 load(":build_info.bzl", "BUILD_CONFIGS", "BUILD_CPU_INFO", "BUILD_MODES")
@@ -98,21 +98,21 @@ android_library(
     ],
 ) for config in BUILD_CONFIGS]
 
-[android_binary_cpu_transition(
+[android_binary_transition_export(
     name = "cloverplay_%s_%s" % (
         config.mode,
         config.cpu,
     ),
-    cpu = config.cpu,
-    dep = ":cloverplay_%s_%s_apk" % (
+    apk = ":cloverplay_%s_%s_apk" % (
         config.mode,
         config.cpu,
     ),
+    cpu = config.cpu,
     visibility = ["//visibility:public"],
 ) for config in BUILD_CONFIGS if config.cpu != "fat"]
 
-[alias(
+[android_binary_export(
     name = "cloverplay_%s_fat" % config.mode,
-    actual = "cloverplay_%s_fat_apk" % config.mode,
+    apk = "cloverplay_%s_fat_apk" % config.mode,
     visibility = ["//visibility:public"],
 ) for config in BUILD_CONFIGS if config.cpu == "fat"]

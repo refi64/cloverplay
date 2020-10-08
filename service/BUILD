@@ -1,5 +1,4 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
-# load("//:build/cpu_transition.bzl", "android_native_cpu_transition")
 
 cc_library(
     name = "core",

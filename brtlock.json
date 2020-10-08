@@ -7,11 +7,11 @@
     "https://github.com/bazelbuild/rules_pkg/archive/79eafadca7b4fdb675b1cfa40b2ac20f23139271.tar.gz"                    : "8c3cd802d669186cdff6303f40dda567638870c6ca57e6df0f3e50a0d452be9f",
     "https://github.com/bazelbuild/rules_cc/archive/7c3170fe93e13fbd4835bfa4f64ff93cf2c9b6c8.tar.gz"                     : "e87ba52315ec992d91c0306e19c723eef02e65ed84fd74cfc43c68cdb9dc7bed",
     "https://github.com/bazelbuild/rules_jvm_external/archive/bad9e2501279aea5268b1b8a5463ccc1be8ddf65.tar.gz"           : "7348f1bed95f15766c6448f4be2b3ed76136895bf33cf99d1fcec35cd6c2d13e",
+    "https://github.com/bazelbuild/bazel/releases/download/3.5.0/bazel-3.5.0-linux-x86_64"                               : "7ecb6f51c02dad0c343aa8dca804cf07b42b56e5ce4521092d83fe1dbd6a6581",
     "https://github.com/Neargye/magic_enum/releases/download/v0.6.5/magic_enum.hpp"                                      : "3923e2d8fb5090a4c5ed3c1238d0e7738ebba4a90e112549f82a26ff81b2aa0d",
     "https://github.com/bazelbuild/rules_android/archive/9ab1134546364c6de84fc6c80b4202fdbebbbb35.tar.gz"                : "f329928c62ade05ceda72c4e145fd300722e6e592627d43580dd0a8211c14612",
     "https://github.com/fmtlib/fmt/releases/download/6.2.0/fmt-6.2.0.zip"                                                : "a4468d528682143dcef2f16068104e03ef50467b0170b6125c9caf777d27bf10",
     "https://dl.google.com/android/repository/platform-29_r04.zip"                                                       : "c9eaf2ce4e8fa6f5a8036bd3c95363d003733bf0a1bd349718cadf802db44c69",
     "https://android.googlesource.com/platform/sdk/+/android-10.0.0_r33/files/proguard-android-optimize.txt?format=TEXT" : "dd53ac9a87b7485bd5629160fe6f33f0cabd5a30b237a4aa69a5446ac1a10299",
-    "https://github.com/bazelbuild/rules_kotlin/releases/download/legacy-1.4.0-rc2/rules_kotlin_release.tgz"             : "560a0dba4386439d89c94a8242d34dbbb817829acf291fef7a8222c9be2c96da",
-    "https://github.com/bazelbuild/bazel/releases/download/3.0.0/bazel-3.0.0-linux-x86_64"                               : "3efb903ef885339a271445a9940642df704f97297fbe268f131d4fe36b02ea80"
+    "https://github.com/bazelbuild/rules_kotlin/releases/download/legacy-1.4.0-rc2/rules_kotlin_release.tgz"             : "560a0dba4386439d89c94a8242d34dbbb817829acf291fef7a8222c9be2c96da"
 }

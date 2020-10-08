@@ -1,6 +1,6 @@
 local android_sdk_components = import 'android_sdk_components.json';
 
-local bazel_ver = '3.0.0';
+local bazel_ver = '3.5.0';
 local fmt_ver = '6.2.0';
 local magic_enum_ver = '0.6.5';
 local proguard_specs_ver = 'android-10.0.0_r33';
