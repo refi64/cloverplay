@@ -95,13 +95,14 @@ task :sign do
     cpu = config[:cpu]
     mode = config[:mode]
 
-    unsigned = "#{bin}/cloverplay_#{mode}_#{cpu}_unsigned.apk"
-    unsigned_sentry = "#{bin}/cloverplay_#{mode}_#{cpu}_unsigned_sentry.apk"
-    aligned = "#{bin}/cloverplay_#{mode}_#{cpu}_unsigned_aligned.apk"
-    release = "#{bin}/cloverplay_#{mode}_#{cpu}_release.apk"
-    map = "#{bin}/cloverplay_#{mode}_#{cpu}_proguard.map"
-    manifest = "#{bin}/_merged/cloverplay_#{mode}_#{cpu}/AndroidManifest.xml"
-    sentry_props = "assets/sentry-debug-meta.properties"
+    base = "#{bin}/cloverplay_#{mode}_#{cpu}"
+    unsigned = "#{base}_unsigned.apk"
+    unsigned_sentry = "#{base}_unsigned_sentry.apk"
+    aligned = "#{base}_unsigned_aligned.apk"
+    release = "#{base}_release.apk"
+    map = "#{base}_proguard.map"
+    manifest = "#{base}_manifest.xml"
+    sentry_props = 'assets/sentry-debug-meta.properties'
     ks = 'cloverplay.keystore'
 
     next if !File.exist?(unsigned)
