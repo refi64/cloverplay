@@ -81,8 +81,8 @@ android_library(
     manifest = "AndroidManifest.trial.xml" if config.mode == "trial" else "AndroidManifest.xml",
     manifest_values = {
         "applicationId": APP_IDS[config.mode],
-        "versionCode": "4%s" % BUILD_CPU_INFO[config.cpu].version_suffix,
-        "versionName": "0.4",
+        "versionCode": "5%s" % BUILD_CPU_INFO[config.cpu].version_suffix,
+        "versionName": "0.5",
         "SENTRY_DSN": SENTRY_DSN,
     },
     proguard_generate_mapping = True,
